@@ -17,7 +17,7 @@ import (
 func New() (*chi.Mux, error) {
 	logger := logging.NewLogger()
 
-	functionAPI, err := functions.NewAPI()
+	functionAPI, err := functions.NewAPI(nil)
 	if err != nil {
 		logger.WithField("module", "app").Error(err)
 		return nil, err
