@@ -1,6 +1,6 @@
 package main
 
-import "github.com/galo/moolon/cmd"
+import "github.com/galo/moloon/cmd"
 
 func main() {
 	cmd.Execute()

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/galo/moloon/api/app"
+	"github.com/galo/moloon/functions"
 	"github.com/galo/moloon/logging"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -17,7 +17,7 @@ import (
 func New() (*chi.Mux, error) {
 	logger := logging.NewLogger()
 
-	appAPI, err := app.NewAPI()
+	appAPI, err := functions.NewAPI()
 	if err != nil {
 		logger.WithField("module", "app").Error(err)
 		return nil, err
