@@ -8,4 +8,5 @@ require (
 	github.com/go-chi/render v1.0.1 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/viper v1.5.0
+	gopkg.in/square/go-jose.v2 v2.4.0 // indirect
 )
