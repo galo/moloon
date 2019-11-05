@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/galo/moloon/functions"
+	"github.com/galo/moloon/api/functions"
 	"github.com/galo/moloon/logging"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -17,7 +17,7 @@ import (
 func New() (*chi.Mux, error) {
 	logger := logging.NewLogger()
 
-	appAPI, err := functions.NewAPI()
+	functionAPI, err := functions.NewAPI()
 	if err != nil {
 		logger.WithField("module", "app").Error(err)
 		return nil, err
@@ -37,7 +37,7 @@ func New() (*chi.Mux, error) {
 	// r.Use(corsConfig().Handler)
 
 	r.Group(func(r chi.Router) {
-		r.Mount("/api", appAPI.Router())
+		r.Mount("/api", functionAPI.Router())
 	})
 
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {

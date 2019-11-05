@@ -2,177 +2,126 @@ package functions
 
 import (
 	"context"
-	"github.com/galo/pym/api"
-	"io"
+	"errors"
 	"net/http"
-	"os"
-	"path/filepath"
-	"strings"
 
-	"github.com/galo/moloon/auth/jwt"
-	"github.com/galo/moloon/logging"
-	"github.com/galo/moloon/models"
+	"github.ccom/galo/moloon/models"
+
+	"github.com/dhax/go-base/auth/pwdless"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"github.com/google/uuid"
 )
 
-// LinksResource implements links controller handler.
-type FunctionsResource struct {
+// The list of error types returned from account resource.
+var (
+	ErrFunctionValidation = errors.New("function validation error")
+	ErrNotFound = errors.New("function not found error")
+	ErrInvalidRequest = errors.New("invalid request")
+)
+
+// FunctionStore defines database operations for account.
+type FunctionStore interface {
+	Get(uid string) (*Function, error)
+	Update(Function) error
+	Delete(Function) error
 }
 
-// NewLinksResource creates and returns a links resource.
-func NewFunctionsResource() *FunctionsResource {
-	return &FunctionsResource{}
+// FunctionResource implements account management handler.
+type FunctionResource struct {
+	Store FunctionStore
 }
 
-func (rs *FunctionsResource) router() *chi.Mux {
-	auth, err := jwt.NewTokenAuth()
-	if err != nil {
-		logging.Logger.Panic(err)
+// NewFunctionResource creates and returns an account resource.
+func NewFunctionResource(store FunctionStore) *FunctionStore {
+	return &NewFunctionResource{
+		Store: store,
 	}
+}
+
+func (rs *FunctionResource) router() *chi.Mux {
+	//auth, err := jwt.NewTokenAuth()
+	//if err != nil {
+	//	logging.Logger.Panic(err)
+	//}
 
 	r := chi.NewRouter()
-	r.Use(auth.Verifier())
-
-	r.Use(jwt.Authenticator)
+	//r.Use(auth.Verifier())
+	//r.Use(jwt.Authenticator)
 	//r.Use(rs.LinkCtx)
-	r.Put("/", rs.createLink)
 
-	r.Route("/{linkID}", func(r chi.Router) {
-		r.Use(LinkIDCtx)
-		r.Put("/content", rs.addDoc)
+	r.Post("/", rs.createFunction)
 
-		//r.Get("/content", rs.getDoc)
+	r.Route("/{functionName}", func(r chi.Router) {
+		r.Use(functionCtx)
+		r.Get("/", rs.getFunction)
+
 	})
 
 	return r
 }
 
-func (rs *FunctionsResource) addDoc(w http.ResponseWriter, r *http.Request) {
-	//Based on https://zupzup.org/go-http-file-upload-download/
-
-	profile := r.PostFormValue("profile")
-	file, header, err := r.FormFile("file")
-	if err != nil {
-		logging.GetLogEntry(r).Error(err)
-		_ = render.Render(w, r, ErrBadRequest)
-		return
-	}
-	defer file.Close()
-
-	name := strings.Split(header.Filename, ".")
-	logging.GetLogEntry(r).Debug("File name:", name[0])
-
-	// Get file hhandler
-	id, err := uuid.NewRandom()
-	if err != nil {
-		logging.GetLogEntry(r).Error("Error generating UUID", err)
-		_ = render.Render(w, r, ErrInternalServerError)
-		return
-	}
-
-	fileName := id.String()
-	newPath := filepath.Join("/tmp", fileName)
-	logging.GetLogEntry(r).Debug("Profile: %s, File: %s\n", profile, newPath)
-
-	newFile, err := os.Create(newPath)
-	if err != nil {
-		logging.GetLogEntry(r).Error("Error creating tmp file", err)
-		_ = render.Render(w, r, ErrInternalServerError)
-		return
-	}
-	defer newFile.Close()
-
-	// Read the file and write into disk
-	fileBytes, err := io.Copy(newFile, file)
-	if err != nil {
-		logging.GetLogEntry(r).Error("Error copying file", err)
-		_ = render.Render(w, r, ErrInternalServerError)
-		return
-	}
-
-	// Empty file uploaded
-	if fileBytes == 0 {
-		logging.GetLogEntry(r).Warn("Empty file uploaded!")
-		_ = render.Render(w, r, ErrBadRequest)
-		return
-	}
-
-	claims := jwt.ClaimsFromCtx(r.Context())
-
-	// Return the document
-	d := models.Document{Name: "mydoc",
-		DocumentId: "123",
-		FolderId:   "123",
-		CreatedAt:  api.MakeTimestamp(),
-		ModifiedAt: api.MakeTimestamp(),
-		Owner:      claims.Sub,
-		ModifiedBy: claims.Sub,
-		UploadedBy: claims.Sub}
-
-	res := newDocumentResponse(d)
-
-	render.Respond(w, r, res)
-}
-
-func (rs *FunctionsResource) createLink(w http.ResponseWriter, r *http.Request) {
-	//TODO: Return a link
-
-	l := models.Links{LinkURL: "https://localhost:3000/api/links/aabbccff12bbccc/content"}
-
-	res := newLinksResponse(l)
-
-	render.Respond(w, r, res)
-}
-
-// DocumentResponse is the response payload for the Document data model.
-//
-// In the DocumentResponse object, first a Render() is called on itself,
-// then the next field, and so on, all the way down the tree.
-// Render is called in top-down order, like a http handler middleware chain.
-type DocumentResponse struct {
-	models.Document `json:"document,omitempty"`
-}
-
-// LinksResponse is the response payload for the Document data model.
-//
-// In the DocumentResponse object, first a Render() is called on itself,
-// then the next field, and so on, all the way down the tree.
-// Render is called in top-down order, like a http handler middleware chain.
-type LinksResponse struct {
-	models.Links `json:"link,omitempty"`
-}
-
-func newDocumentResponse(d models.Document) *DocumentResponse {
-	resp := &DocumentResponse{Document: d}
-	return resp
-}
-
-func newLinksResponse(l models.Links) *LinksResponse {
-	resp := &LinksResponse{Links: l}
-	return resp
-}
-
-//func (rs *LinksResource) LinkCtx(next http.Handler) http.Handler {
-//	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-//		claims := jwt.ClaimsFromCtx(r.Context())
-//		ctx := context.WithValue(r.Context(), ctxProfile, claims)
-//		next.ServeHTTP(w, r.WithContext(ctx))
-//	})
-//}
-
-// LinkCtx middleware is used to load an LinkID  from
-// the URL parameters passed through as the request. In case
-// the LinkID could not be found, we stop here and return a 404.
-func LinkIDCtx(next http.Handler) http.Handler {
+func (rs *FunctionResource) functionCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		linkID := chi.URLParam(r, "linkID")
-		if linkID == "" {
+		functionName := chi.URLParam(r, "functionName")
+		if functionName == "" {
 			_ = render.Render(w, r, ErrNotFound)
 			return
 		}
-		ctx := context.WithValue(r.Context(), "linkID", linkID)
+		ctx := context.WithValue(r.Context(), "functionName", functionName)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+type functionRequest struct {
+	*Function
+}
+
+func (d *functionRequest) Bind(r *http.Request) error {
+	// d.ProtectedActive = true
+	// d.ProtectedRoles = []string{}
+	return nil
+}
+
+type functionResponse struct {
+	*Function
+}
+
+func newFunctionResponse(a *Function) *functionResponse {
+	resp := &functionResponse{Function: a}
+	return resp
+}
+
+func (rs *FunctionResource) get(w http.ResponseWriter, r *http.Request) {
+	function := r.Context().Value(functionCtx).(*Function)
+	render.Respond(w, r, newFunctionResponse(function))
+}
+
+func (rs *FunctionResource) update(w http.ResponseWriter, r *http.Request) {
+	acc := r.Context().Value(functionCtx).(*Function)
+	data := &functionRequest{Function: acc}
+	if err := render.Bind(r, data); err != nil {
+		render.Render(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	//if err := rs.Store.Update(acc); err != nil {
+	//	switch err.(type) {
+	//	case validation.Errors:
+	//		render.Render(w, r, ErrValidation(ErrAccountValidation, err.(validation.Errors)))
+	//		return
+	//	}
+	//	render.Render(w, r, ErrRender(err))
+	//	return
+	//}
+
+	render.Respond(w, r, newFunctionResponse(acc))
+}
+
+func (rs *FunctionResource) delete(w http.ResponseWriter, r *http.Request) {
+	acc := r.Context().Value(functionCtx).(*pwdless.Account)
+	if err := rs.Store.Delete(acc); err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
+	render.Respond(w, r, http.NoBody)
 }

@@ -11,11 +11,10 @@ require (
 	github.com/go-chi/docgen v1.0.5
 	github.com/go-chi/jwtauth v4.0.3+incompatible
 	github.com/go-chi/render v1.0.1
-	github.com/go-ozzo/ozzo-validation v3.5.0+incompatible
-	github.com/google/uuid v1.1.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.5.0
+	gopkg.in/mail.v2 v2.3.1 // indirect
 	gopkg.in/square/go-jose.v2 v2.4.0
 )
