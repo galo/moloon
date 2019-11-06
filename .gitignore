@@ -1,7 +1,7 @@
 # Mac
 .DS_Store
 
- Binaries for programs and plugins
+# Binaries for programs and plugins
 *.exe
 *.exe~
 *.dll
@@ -9,7 +9,7 @@
 *.dylib
 debug
 __debug_bin
-mollon
+moloon
 
 # Test binary, build with `go test -c`
 *.test
