@@ -27,7 +27,7 @@ func (s *FunctionStore) Delete(models.Function) error {
 func (s *FunctionStore) Create(f models.Function) error {
 	setupDb(s.db)
 
-	statement, err := s.db.Prepare("INSERT INTO functions (fname, image lang) VALUES (?, ?, ?)")
+	statement, err := s.db.Prepare("INSERT INTO functions (fname, image, lang) VALUES (?, ?, ?)")
 	if err != nil {
 		log.Println("Error inserting function", err)
 		return err
@@ -43,7 +43,8 @@ func (s *FunctionStore) Create(f models.Function) error {
 }
 
 func setupDb(db *sql.DB) {
-	statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS functions (fname TEXT , image TEXT, lang TEXT)")
+	statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS " +
+		"functions (id INTEGER PRIMARY KEY AUTOINCREMENT, fname TEXT , image TEXT, lang TEXT)")
 	if err != nil {
 		log.Fatal("Error setting up the db", err)
 	}
