@@ -13,6 +13,7 @@ require (
 	github.com/go-chi/render v1.0.1
 	github.com/go-ozzo/ozzo-validation v3.5.0+incompatible
 	github.com/go-pg/pg v7.1.5+incompatible
+	github.com/mattn/go-sqlite3 v1.11.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5

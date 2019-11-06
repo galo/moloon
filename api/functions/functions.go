@@ -73,8 +73,8 @@ type functionRequest struct {
 }
 
 func (d *functionRequest) Bind(r *http.Request) error {
-	d.Kind = "function"
-	d.ApiVersion = "v1"
+	//d.Kind = "function"
+	//d.ApiVersion = "v1"
 	if d.Metadata.Name == "" {
 		return ErrFunctionValidation
 	}
@@ -96,6 +96,7 @@ func newFunctionResponse(f *models.Function) *functionResponse {
 
 func (rs *FunctionResource) get(w http.ResponseWriter, r *http.Request) {
 	function := r.Context().Value(rs.functionCtx).(*models.Function)
+
 	render.Respond(w, r, newFunctionResponse(function))
 }
 
@@ -105,7 +106,11 @@ func (rs *FunctionResource) create(w http.ResponseWriter, r *http.Request) {
 		render.Render(w, r, ErrInvalidRequest(err))
 		return
 	}
-	//dbNewFunctione(data)
+
+	if err := rs.Store.Create(*data.Function); err != nil {
+		render.Render(w, r, ErrInvalidRequest(err))
+	}
+
 	render.Respond(w, r, newFunctionResponse(data.Function))
 }
 

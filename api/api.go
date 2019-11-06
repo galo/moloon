@@ -2,6 +2,8 @@
 package api
 
 import (
+	"github.com/galo/moloon/database"
+	"log"
 	"net/http"
 	"time"
 
@@ -17,7 +19,13 @@ import (
 func New() (*chi.Mux, error) {
 	logger := logging.NewLogger()
 
-	functionAPI, err := functions.NewAPI(nil)
+	// Setup the DB
+	db, err := database.DBConn()
+	if err != nil {
+		log.Fatal("Db cannot be configured", err)
+	}
+
+	functionAPI, err := functions.NewAPI(db)
 	if err != nil {
 		logger.WithField("module", "app").Error(err)
 		return nil, err

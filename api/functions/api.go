@@ -3,9 +3,10 @@
 package functions
 
 import (
+	"database/sql"
+	"github.com/galo/moloon/database"
 	"github.com/galo/moloon/logging"
 	"github.com/go-chi/chi"
-	"github.com/go-pg/pg"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
@@ -23,9 +24,10 @@ type API struct {
 }
 
 // NewAPI configures and returns application API.
-func NewAPI(db *pg.DB) (*API, error) {
+func NewAPI(db *sql.DB) (*API, error) {
 	//accountStore := database.NewAccountStore(db)
-	functionRsrc := NewFunctionResource(nil)
+
+	functionRsrc := NewFunctionResource(database.NewFunctionStore(db))
 
 	api := &API{
 		FunctionRsc: functionRsrc,
@@ -37,7 +39,7 @@ func NewAPI(db *pg.DB) (*API, error) {
 func (a *API) Router() *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Mount("/functions", a.FunctionRsc.router())
+	r.Mount("/v1/functions", a.FunctionRsc.router())
 
 	return r
 }
