@@ -1,0 +1,11 @@
+{
+	"kind": "function",
+	"apiVersion": "v1",
+	"metadata": {
+		"name": "fibonacci"
+	},
+	"spec": {
+		"image": "jdrk.io / galoficbbo: 1.1",
+		"lang": "docker"
+	}
+}

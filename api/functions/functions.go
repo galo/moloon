@@ -1,6 +1,8 @@
 package functions
 
 import (
+	"github.com/galo/moloon/api"
+	"github.com/galo/moloon/database"
 	"net/http"
 
 	"github.com/galo/moloon/models"
@@ -8,21 +10,13 @@ import (
 	"github.com/go-chi/render"
 )
 
-// FunctionStore defines database operations for account.
-type FunctionStore interface {
-	Get(name string) (*models.Function, error)
-	Create(models.Function) error
-	Delete(models.Function) error
-	GetAll() ([]*models.Function, error)
-}
-
 // FunctionResource implements account management handler.
 type FunctionResource struct {
-	Store FunctionStore
+	Store database.FunctionStore
 }
 
 // NewFunctionResource creates and returns an account resource.
-func NewFunctionResource(store FunctionStore) *FunctionResource {
+func NewFunctionResource(store database.FunctionStore) *FunctionResource {
 	return &FunctionResource{
 		Store: store,
 	}
@@ -64,7 +58,9 @@ func (rs *FunctionResource) router() *chi.Mux {
 //	})
 //}
 
-// This is the request Render https://github.com/go-chi/render
+// Request and Response Render helpers https://github.com/go-chi/render
+
+// This is the request Render
 type newFunctionRequest struct {
 	*models.Function
 }
@@ -108,17 +104,17 @@ func newFunctionListResponse(fns []*models.Function) []render.Renderer {
 func (rs *FunctionResource) get(w http.ResponseWriter, r *http.Request) {
 	functionName := chi.URLParam(r, "functionName")
 	if functionName == "" {
-		_ = render.Render(w, r, ErrNotFound)
+		_ = render.Render(w, r, api.ErrNotFound)
 		return
 	}
 
 	f, err := rs.Store.Get(functionName)
 	if err == models.ErrFunctionNotfound {
-		_ = render.Render(w, r, ErrNotFound)
+		_ = render.Render(w, r, api.ErrNotFound)
 		return
 	}
 	if err != nil {
-		_ = render.Render(w, r, ErrInternalServerError)
+		_ = render.Render(w, r, api.ErrInternalServerError)
 		return
 	}
 
@@ -128,12 +124,12 @@ func (rs *FunctionResource) get(w http.ResponseWriter, r *http.Request) {
 func (rs *FunctionResource) create(w http.ResponseWriter, r *http.Request) {
 	data := &newFunctionRequest{}
 	if err := render.Bind(r, data); err != nil {
-		render.Render(w, r, ErrInvalidRequest(err))
+		render.Render(w, r, api.ErrInvalidRequest(err))
 		return
 	}
 
 	if err := rs.Store.Create(*data.Function); err != nil {
-		render.Render(w, r, ErrInvalidRequest(err))
+		render.Render(w, r, api.ErrInvalidRequest(err))
 	}
 	render.Respond(w, r, newFunctionResponse(data.Function))
 }
@@ -141,22 +137,22 @@ func (rs *FunctionResource) create(w http.ResponseWriter, r *http.Request) {
 func (rs *FunctionResource) delete(w http.ResponseWriter, r *http.Request) {
 	functionName := chi.URLParam(r, "functionName")
 	if functionName == "" {
-		_ = render.Render(w, r, ErrNotFound)
+		_ = render.Render(w, r, api.ErrNotFound)
 		return
 	}
 
 	f, err := rs.Store.Get(functionName)
 	if err == models.ErrFunctionNotfound {
-		_ = render.Render(w, r, ErrNotFound)
+		_ = render.Render(w, r, api.ErrNotFound)
 		return
 	} else if err != nil {
-		_ = render.Render(w, r, ErrInternalServerError)
+		_ = render.Render(w, r, api.ErrInternalServerError)
 		return
 	}
 
 	err = rs.Store.Delete(*f)
 	if err != nil {
-		_ = render.Render(w, r, ErrInternalServerError)
+		_ = render.Render(w, r, api.ErrInternalServerError)
 		return
 	}
 
@@ -166,15 +162,15 @@ func (rs *FunctionResource) delete(w http.ResponseWriter, r *http.Request) {
 func (rs *FunctionResource) list(w http.ResponseWriter, r *http.Request) {
 	fns, err := rs.Store.GetAll()
 	if err == models.ErrFunctionNotfound {
-		_ = render.Render(w, r, ErrNotFound)
+		_ = render.Render(w, r, api.ErrNotFound)
 		return
 	} else if err != nil {
-		_ = render.Render(w, r, ErrInternalServerError)
+		_ = render.Render(w, r, api.ErrInternalServerError)
 		return
 	}
 
 	if err := render.RenderList(w, r, newFunctionListResponse(fns)); err != nil {
-		_ = render.Render(w, r, ErrRender(err))
+		_ = render.Render(w, r, api.ErrRender(err))
 		return
 	}
 }

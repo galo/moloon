@@ -1,18 +1,27 @@
 // Package models contains application specific entities.
 package models
 
-import "errors"
+import (
+	"encoding/json"
+	"errors"
+	"github.com/golang/glog"
+	"gopkg.in/yaml.v2"
+)
 
 //Function holds the information in a Function
 type Function struct {
-	Kind       string
-	ApiVersion string
-
-	Metadata Metadata
+	APIHeader
+	Metadata FunctionMetadata
 	Spec     FunctionSpec `json:"spec,omitempty"`
 }
 
-type Metadata struct {
+// APIHeader represents the object version and kind.
+type APIHeader struct {
+	APIVersion string `json:"apiVersion"`
+	Kind       string `json:"kind"`
+}
+
+type FunctionMetadata struct {
 	Name   string            `json:"name,omitempty"`
 	Labels map[string]string `json:"labels,omitempty"`
 }
@@ -24,10 +33,31 @@ type FunctionSpec struct {
 
 // NewFunction is a function factory that creates the barebone function
 func NewFunction(name string, image string, lang string) *Function {
-	var m = Metadata{name, make(map[string]string)}
+	var a = APIHeader{APIVersion: "v1", Kind: "function"}
+	var m = FunctionMetadata{name, make(map[string]string)}
 	var s = FunctionSpec{Image: image, Lang: lang}
 
-	return &Function{Kind: "function", ApiVersion: "v1", Metadata: m, Spec: s}
+	return &Function{APIHeader: a, Metadata: m, Spec: s}
+}
+
+// JSONMarshal marshals the api object into JSON format.
+func (f *Function) JSONMarshal() (data []byte, err error) {
+	data, err = json.Marshal(f)
+	return
+}
+
+// YamlMarshal marshals the api object into YAML format.
+func (f *Function) YamlMarshal() (data []byte, err error) {
+	data, err = yaml.Marshal(f)
+	return
+}
+
+// YamlUnmarshal ummarshals the YAML into an api object.
+func (f *Function) YamlUnmarshal(data []byte) (err error) {
+	if err = yaml.Unmarshal(data, &f); err != nil {
+		glog.V(1).Infof("Failed to convert yaml file into a cluster object.")
+	}
+	return
 }
 
 // The list of error types returned from account resource.
