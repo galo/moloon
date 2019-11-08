@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"log"
 	"os"
 
@@ -16,7 +17,10 @@ var cfgFile string
 var RootCmd = &cobra.Command{
 	Use:   "moloon",
 	Short: "Edge FaaS",
-	Long:  `Edge FaaS`,
+	Long:  `A distributed FaaS framework`,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		showBanner()
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -60,4 +64,17 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+func showBanner() {
+	notice := color.New(color.Bold, color.FgGreen).PrintlnFunc()
+	notice("")
+	notice(`                 .__`)
+	notice(`    _____   ____ |  |   ____   ____   ____`)
+	notice(`   /     \ /  _ \|  |  /  _ \ /  _ \ /    \`)
+	notice(`  |  Y Y  (  <_> )  |_(  <_> |  <_> )   |  \`)
+	notice(`  |__|_|  /\____/|____/\____/ \____/|___|  /`)
+	notice(`        \/                               \/`)
+	notice("")
+
 }
