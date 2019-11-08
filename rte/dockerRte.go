@@ -10,6 +10,11 @@ import (
 type DockerRte struct {
 }
 
+
+func NewDockerRuntime() *DockerRte {
+	return &DockerRte{};
+}
+
 //Executes a function in the docker inside docker runtime
 func (r *DockerRte) Execute(f models.Function) (err error) {
 

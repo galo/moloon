@@ -145,7 +145,7 @@ func appendGdrsBinaryDirToPath() (env []string) {
 	for i, varValue := range env {
 		keyValue := strings.Split(varValue, "=")
 		if strings.EqualFold(keyValue[0], "PATH") {
-			keyValue[1] = fmt.Sprintf("%s/bin%c%s", GdrsHome(), os.PathListSeparator, keyValue[1])
+			keyValue[1] = fmt.Sprintf("%s/bin%c%s", "/tmp", os.PathListSeparator, keyValue[1])
 		}
 		env[i] = strings.Join(keyValue, "=")
 	}

@@ -1,4 +1,4 @@
-package api
+package functions
 
 import (
 	"github.com/go-chi/render"

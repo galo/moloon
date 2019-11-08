@@ -2,6 +2,7 @@
 package api
 
 import (
+	"github.com/galo/moloon/api/faas"
 	"github.com/galo/moloon/database"
 	"log"
 	"net/http"
@@ -31,6 +32,13 @@ func New() (*chi.Mux, error) {
 		return nil, err
 	}
 
+	faasAPI, err := faas.NewAPI(db)
+	if err != nil {
+		logger.WithField("module", "app").Error(err)
+		return nil, err
+	}
+
+
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
@@ -46,6 +54,11 @@ func New() (*chi.Mux, error) {
 
 	r.Group(func(r chi.Router) {
 		r.Mount("/api", functionAPI.Router())
+	})
+
+
+	r.Group(func(r chi.Router) {
+		r.Mount("/faas", faasAPI.Router())
 	})
 
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {

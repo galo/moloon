@@ -10,7 +10,7 @@ var (
 	ErrFunctionSpec = errors.New("function specification error")
 )
 
-// The runtime emviroment interface
+// The runtime enviroment interface
 type Runtime interface {
 	Execute(models.Function) (err error)
 }

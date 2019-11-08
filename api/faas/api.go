@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"github.com/galo/moloon/database"
 	"github.com/galo/moloon/logging"
+	"github.com/galo/moloon/rte"
 	"github.com/go-chi/chi"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -25,9 +26,8 @@ type API struct {
 
 // NewAPI configures and returns application API.
 func NewAPI(db *sql.DB) (*API, error) {
-	//accountStore := database.NewAccountStore(db)
-
-	functionRsrc := NewFaaSResource(database.NewFunctionStore(db))
+	functionRsrc := NewFaaSResource(database.NewFunctionStore(db),
+		rte.NewDockerRuntime())
 
 	api := &API{
 		FaaSRsc: functionRsrc,
