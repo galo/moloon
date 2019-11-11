@@ -17,10 +17,12 @@ require (
 	github.com/mattn/go-sqlite3 v1.11.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/sirupsen/logrus v1.4.2
-	github.com/spf13/afero v1.2.1 // indirect
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.5.0
-	github.com/stretchr/testify v1.3.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.4.0
 	gopkg.in/yaml.v2 v2.2.4
+	k8s.io/api v0.0.0-20191109101513-0171b7c15da1 // indirect
+	k8s.io/apimachinery v0.0.0-20191111054156-6eb29fdf75dc
+	k8s.io/client-go v11.0.0+incompatible
+	k8s.io/utils v0.0.0-20191030222137-2b95a09bc58d // indirect
 )

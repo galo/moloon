@@ -1,6 +1,6 @@
 version: "3"
 services:
-  moloo:
+  moloon-agent:
     image:  r.jdkr.io/galo/moloon
     container_name: moloon
     build:
@@ -11,7 +11,7 @@ services:
         - HTTPS_PROXY
         - no_proxy
         - http_proxy
-        - https_proxy
+        - https_proxy      
     environment:
       - NO_PROXY
       - HTTP_PROXY
@@ -20,4 +20,7 @@ services:
       - http_proxy
       - https_proxy
     ports:
-      - "3000:3000" # http
+      - "3000:3000" # httpdoc
+    entrypoint:
+      - /go/bin/moloon
+      - server

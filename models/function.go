@@ -4,26 +4,15 @@ package models
 import (
 	"encoding/json"
 	"errors"
-	"github.com/golang/glog"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
 
 //Function holds the information in a Function
 type Function struct {
 	APIHeader
-	Metadata FunctionMetadata
+	Metadata Metadata
 	Spec     FunctionSpec `json:"spec,omitempty"`
-}
-
-// APIHeader represents the object version and kind.
-type APIHeader struct {
-	APIVersion string `json:"apiVersion"`
-	Kind       string `json:"kind"`
-}
-
-type FunctionMetadata struct {
-	Name   string            `json:"name,omitempty"`
-	Labels map[string]string `json:"labels,omitempty"`
 }
 
 type FunctionSpec struct {
@@ -34,7 +23,7 @@ type FunctionSpec struct {
 // NewFunction is a function factory that creates the barebone function
 func NewFunction(name string, image string, lang string) *Function {
 	var a = APIHeader{APIVersion: "v1", Kind: "function"}
-	var m = FunctionMetadata{name, make(map[string]string)}
+	var m = Metadata{name, make(map[string]string)}
 	var s = FunctionSpec{Image: image, Lang: lang}
 
 	return &Function{APIHeader: a, Metadata: m, Spec: s}
@@ -55,7 +44,7 @@ func (f *Function) YamlMarshal() (data []byte, err error) {
 // YamlUnmarshal ummarshals the YAML into an api object.
 func (f *Function) YamlUnmarshal(data []byte) (err error) {
 	if err = yaml.Unmarshal(data, &f); err != nil {
-		glog.V(1).Infof("Failed to convert yaml file into a cluster object.")
+		logrus.Println("Failed to convert yaml file into a function object.")
 	}
 	return
 }

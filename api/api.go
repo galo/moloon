@@ -2,6 +2,7 @@
 package api
 
 import (
+	"github.com/galo/moloon/api/controller"
 	"github.com/galo/moloon/api/faas"
 	"github.com/galo/moloon/database"
 	"log"
@@ -17,7 +18,7 @@ import (
 )
 
 // New configures application resources and routes.
-func New() (*chi.Mux, error) {
+func New(isController bool) (*chi.Mux, error) {
 	logger := logging.NewLogger()
 
 	// Setup the DB
@@ -25,19 +26,6 @@ func New() (*chi.Mux, error) {
 	if err != nil {
 		log.Fatal("Db cannot be configured", err)
 	}
-
-	functionAPI, err := functions.NewAPI(db)
-	if err != nil {
-		logger.WithField("module", "app").Error(err)
-		return nil, err
-	}
-
-	faasAPI, err := faas.NewAPI(db)
-	if err != nil {
-		logger.WithField("module", "app").Error(err)
-		return nil, err
-	}
-
 
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
@@ -52,14 +40,41 @@ func New() (*chi.Mux, error) {
 	// use CORS middleware if client is not served by this api, e.g. from other domain or CDN
 	// r.Use(corsConfig().Handler)
 
-	r.Group(func(r chi.Router) {
-		r.Mount("/api", functionAPI.Router())
-	})
+	// When running in controller mode, activate the controller API
+	if isController {
+		// Controller controller
+		controllerAPI, err := controller.NewAPI(db)
+		if err != nil {
+			logger.WithField("module", "app").Error(err)
+			return nil, err
+		}
 
+		r.Group(func(r chi.Router) {
+			r.Mount("/api", controllerAPI.Router())
+		})
+	} else {
+		// Functions controller
+		functionAPI, err := functions.NewAPI(db)
+		if err != nil {
+			logger.WithField("module", "app").Error(err)
+			return nil, err
+		}
 
-	r.Group(func(r chi.Router) {
-		r.Mount("/faas", faasAPI.Router())
-	})
+		// FaaS runtime controller
+		faasAPI, err := faas.NewAPI(db)
+		if err != nil {
+			logger.WithField("module", "app").Error(err)
+			return nil, err
+		}
+
+		r.Group(func(r chi.Router) {
+			r.Mount("/api", functionAPI.Router())
+		})
+
+		r.Group(func(r chi.Router) {
+			r.Mount("/faas", faasAPI.Router())
+		})
+	}
 
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("pong"))

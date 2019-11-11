@@ -9,12 +9,12 @@ import (
 )
 
 // serveCmd represents the serve command
-var agentCmd = &cobra.Command{
-	Use:   "agent",
-	Short: "start the moloon agent",
-	Long:  `Starts a http agent server and serves the api`,
+var controllerCmd = &cobra.Command{
+	Use:   "controller",
+	Short: "start the moloon controller",
+	Long:  `Starts a http controller server and serves the api. `,
 	Run: func(cmd *cobra.Command, args []string) {
-		server, err := api.NewServer()
+		server, err := api.NewServer(true)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -23,11 +23,13 @@ var agentCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(agentCmd)
+	RootCmd.AddCommand(controllerCmd)
 
 	// Here you will define your flags and configuration settings.
 	viper.SetDefault("port", "localhost:3000")
 	viper.SetDefault("log_level", "debug")
+
+	// Agents - by default use kubernetes discovery
 
 	// Dev mode
 	viper.SetDefault("dev", "true")

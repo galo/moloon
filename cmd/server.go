@@ -14,7 +14,7 @@ var serveCmd = &cobra.Command{
 	Short: "start the moloon server",
 	Long:  `Starts a http server and serves the api`,
 	Run: func(cmd *cobra.Command, args []string) {
-		server, err := api.NewServer()
+		server, err := api.NewServer(false)
 		if err != nil {
 			log.Fatal(err)
 		}

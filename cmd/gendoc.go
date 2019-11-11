@@ -18,7 +18,7 @@ var (
 var gendocCmd = &cobra.Command{
 	Use:   "gendoc",
 	Short: "Generate project documentation",
-	Long: `Generate project documentation.`,
+	Long:  `Generate project documentation.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if routes {
 			genRoutesDoc()
@@ -42,7 +42,7 @@ func init() {
 }
 
 func genRoutesDoc() {
-	api, _ := api.New()
+	api, _ := api.New(false)
 	fmt.Print("generating routes markdown file: ")
 	md := docgen.MarkdownRoutesDoc(api, docgen.MarkdownOpts{
 		ProjectPath: "github.azc.ext.hp.com/galo/pym",
