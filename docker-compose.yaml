@@ -1,0 +1,23 @@
+version: "3"
+services:
+  moloo:
+    image:  r.jdkr.io/galo/moloon
+    container_name: moloon
+    build:
+      context: .
+      args:
+        - NO_PROXY
+        - HTTP_PROXY
+        - HTTPS_PROXY
+        - no_proxy
+        - http_proxy
+        - https_proxy
+    environment:
+      - NO_PROXY
+      - HTTP_PROXY
+      - HTTPS_PROXY
+      - no_proxy
+      - http_proxy
+      - https_proxy
+    ports:
+      - "3000:3000" # http
