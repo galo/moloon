@@ -40,7 +40,7 @@ func (k *KubernetesDiscovery) GetAll() ([]*models.Agent, error) {
 		// Examples for error handling:
 		// - Use helper functions e.g. errors.IsNotFound()
 		// - And/or cast to StatusError and use its properties like e.g. ErrStatus.Message
-		_, err = clientset.CoreV1().Pods("default").Get("example-xxxxx", metav1.GetOptions{})
+		_, err = clientset.CoreV1().Pods("default").Get("moloon", metav1.GetOptions{})
 		if errors.IsNotFound(err) {
 			fmt.Printf("Pod example-xxxxx not found in default namespace\n")
 		} else if statusError, isStatus := err.(*errors.StatusError); isStatus {
