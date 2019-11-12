@@ -30,6 +30,7 @@ func init() {
 	viper.SetDefault("log_level", "debug")
 
 	// Agents - by default use kubernetes discovery
+	viper.SetDefault("discovery", "kubernetes")
 
 	// Dev mode
 	viper.SetDefault("dev", "true")

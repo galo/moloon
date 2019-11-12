@@ -22,7 +22,8 @@ type API struct {
 	controllerResource *ControllerResource
 }
 
-// NewAPI configures and returns application API.
+// NewAPI configures and returns application API - based on a function
+// store and agent discovery service
 func NewAPI(db *sql.DB) (*API, error) {
 	controllerResource := NewControllerResource(database.NewFunctionStore(db))
 

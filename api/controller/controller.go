@@ -2,16 +2,21 @@ package controller
 
 import (
 	"github.com/galo/moloon/database"
+	"github.com/galo/moloon/disco"
 	"github.com/go-chi/chi"
 	"net/http"
 )
 
 type ControllerResource struct {
-	store database.FunctionStore
+	store            database.FunctionStore
+	discoveryService disco.DiscoveryService
 }
 
 func NewControllerResource(store database.FunctionStore) *ControllerResource {
-	return &ControllerResource{store}
+
+	d := disco.NewDiscoveryService()
+
+	return &ControllerResource{store, d}
 }
 
 func (rs *ControllerResource) router() *chi.Mux {

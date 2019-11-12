@@ -5,6 +5,7 @@ import (
 	"github.com/galo/moloon/api/controller"
 	"github.com/galo/moloon/api/faas"
 	"github.com/galo/moloon/database"
+	"github.com/spf13/viper"
 	"log"
 	"net/http"
 	"time"
@@ -17,7 +18,9 @@ import (
 	"github.com/go-chi/render"
 )
 
-// New configures application resources and routes.
+// New configures application resources and routes.The
+// isController parameter determines if we run in discovery mode
+// discoService determines the discovery backend to use
 func New(isController bool) (*chi.Mux, error) {
 	logger := logging.NewLogger()
 
@@ -43,6 +46,7 @@ func New(isController bool) (*chi.Mux, error) {
 	// When running in controller mode, activate the controller API
 	if isController {
 		// Controller controller
+		viper.GetString("")
 		controllerAPI, err := controller.NewAPI(db)
 		if err != nil {
 			logger.WithField("module", "app").Error(err)

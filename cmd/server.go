@@ -12,7 +12,7 @@ import (
 var serveCmd = &cobra.Command{
 	Use:   "server",
 	Short: "start the moloon server",
-	Long:  `Starts a http server and serves the api`,
+	Long:  `starts a http server and serves the api`,
 	Run: func(cmd *cobra.Command, args []string) {
 		server, err := api.NewServer(false)
 		if err != nil {
