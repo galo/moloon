@@ -2,13 +2,13 @@
 package api
 
 import (
-	"github.com/galo/moloon/api/controller"
-	"github.com/galo/moloon/api/faas"
-	"github.com/galo/moloon/database"
-	"github.com/spf13/viper"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/galo/moloon/api/controller"
+	"github.com/galo/moloon/api/faas"
+	"github.com/galo/moloon/database"
 
 	"github.com/galo/moloon/api/functions"
 	"github.com/galo/moloon/logging"
@@ -46,12 +46,13 @@ func New(isController bool) (*chi.Mux, error) {
 	// When running in controller mode, activate the controller API
 	if isController {
 		// Controller controller
-		viper.GetString("")
 		controllerAPI, err := controller.NewAPI(db)
 		if err != nil {
-			logger.WithField("module", "app").Error(err)
+			logger.WithField("module", "controller").Error(err)
 			return nil, err
 		}
+
+		logger.WithField("module", "controller").Infoln("Starting controller")
 
 		r.Group(func(r chi.Router) {
 			r.Mount("/api", controllerAPI.Router())
@@ -60,16 +61,18 @@ func New(isController bool) (*chi.Mux, error) {
 		// Functions controller
 		functionAPI, err := functions.NewAPI(db)
 		if err != nil {
-			logger.WithField("module", "app").Error(err)
+			logger.WithField("module", "agent").Error(err)
 			return nil, err
 		}
 
 		// FaaS runtime controller
 		faasAPI, err := faas.NewAPI(db)
 		if err != nil {
-			logger.WithField("module", "app").Error(err)
+			logger.WithField("module", "agent").Error(err)
 			return nil, err
 		}
+
+		logger.WithField("module", "controller").Infoln("Starting agent")
 
 		r.Group(func(r chi.Router) {
 			r.Mount("/api", functionAPI.Router())
