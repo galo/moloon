@@ -1,16 +1,18 @@
 package disco
 
 import (
+	"log"
+
 	"github.com/galo/moloon/models"
 	"github.com/spf13/viper"
-	"log"
 )
 
-// FunctionStore defines database operations for account.
+// DiscoveryService the interface for discovery services backends
 type DiscoveryService interface {
 	GetAll() ([]*models.Agent, error)
 }
 
+// NewDiscoveryService returns the configured discovery service
 func NewDiscoveryService() DiscoveryService {
 	var d DiscoveryService
 

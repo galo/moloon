@@ -32,7 +32,11 @@ func (r *DockerRte) Execute(f models.Function) (err error) {
 
 // Execute docker container
 func (r *DockerRte) executeDocker(f models.Function) (err error) {
-	environment.CommandImplementation.Run("echo", []string{"hello works"})
+
+	var args []string
+	args = append(args, "run")
+	args = append(args, f.Spec.Image)
+	environment.CommandImplementation.Run("docker", args)
 
 	return nil
 }

@@ -19,6 +19,7 @@ package environment
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -26,7 +27,6 @@ import (
 	"time"
 
 	"github.com/briandowns/spinner"
-	"github.com/golang/glog"
 )
 
 const defaultFailedCode = 1
@@ -45,7 +45,7 @@ func (b Bash) Run(app string, args []string) (stdout string, stderr string, exit
 	cmd.Stdout = &outbuf
 	cmd.Stderr = &errbuf
 
-	glog.V(1).Infof("Running command %s with the following args: %s.", app, args)
+	log.Printf("Running command %s with the following args: %s.", app, args)
 	err := cmd.Run()
 	stdout = outbuf.String()
 	stderr = errbuf.String()
@@ -60,7 +60,7 @@ func (b Bash) Run(app string, args []string) (stdout string, stderr string, exit
 			// in this situation, exit code could not be get, and stderr will be
 			// empty string very likely, so we use the default fail code, and format err
 			// to string and set to stderr
-			glog.V(1).Infof("Could not get exit code for failed program: %v, %v.", app, args)
+			log.Printf("Could not get exit code for failed program: %v, %v.", app, args)
 			exitCode = defaultFailedCode
 			if stderr == "" {
 				stderr = err.Error()
@@ -73,8 +73,8 @@ func (b Bash) Run(app string, args []string) (stdout string, stderr string, exit
 	}
 
 	// Add logs for debugging purposes:
-	glog.V(1).Infof("Command result: %v", exitCode)
-	glog.V(2).Infof("Command output: stdout: %v, stderr: %v", stdout, stderr)
+	log.Printf("Command result: %v", exitCode)
+	log.Printf("Command output: stdout: %v, stderr: %v", stdout, stderr)
 
 	return
 }
