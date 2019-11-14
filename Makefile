@@ -16,7 +16,7 @@ container: build-linux
 	-t r.jdkr.io/moloon:$(TAG) .
 
 clean-container: build-linux
-	docker build --no-cache --force-rm -t r.jdkr.io/moloon:$(TAG) .
+	docker build --no-cache --force-rm -t r.jdkr.io/galo/moloon:$(TAG) .
 
 clean:
 	rm -f moloon
