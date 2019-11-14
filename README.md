@@ -29,7 +29,7 @@ AUTH_LOGIN_TOKEN_EXPIRY | time.Duration | 11m | login token expiry
 AUTH_JWT_SECRET | string | random | jwt sign and verify key - value "random" creates random 32 char secret at startup (and automatically invalidates existing tokens on app restarts, so during dev you might want to set a fixed value here)
 AUTH_JWT_EXPIRY | time.Duration | 15m | jwt access token expiry
 AUTH_JWT_REFRESH_EXPIRY | time.Duration | 1h | jwt refresh token expiry
-DISCOVERY | string | kubernetes, or config 
+DISCOVERY_CONFIG | string | kubernetes, or file 
 
 ## Kubernetes dependencies
 
