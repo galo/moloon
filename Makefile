@@ -13,7 +13,7 @@ container: build-linux
 	docker build \
 	--build-arg http_proxy=$(http_proxy) \
 	--build-arg https_proxy=$(https_proxy) \
-	-t r.jdkr.io/moloon:$(TAG) .
+	-t r.jdkr.io/galo/moloon:$(TAG) .
 
 clean-container: build-linux
 	docker build --no-cache --force-rm -t r.jdkr.io/galo/moloon:$(TAG) .
