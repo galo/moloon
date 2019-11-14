@@ -1,6 +1,9 @@
 FROM alpine
-WORKDIR /root
-RUN apk --no-cache add ca-certificates
+
+RUN adduser -D appuser
+USER appuser
+
+WORKDIR /appuser
 COPY moloon /go/bin/moloon
 
 ENTRYPOINT ["/go/bin/moloon"]
