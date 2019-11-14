@@ -1,4 +1,4 @@
-package functions
+package error
 
 import (
 	"github.com/go-chi/render"

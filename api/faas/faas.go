@@ -1,7 +1,7 @@
 package faas
 
 import (
-	"github.com/galo/moloon/api/functions"
+	error2 "github.com/galo/moloon/api/error"
 	"github.com/galo/moloon/database"
 	"github.com/galo/moloon/models"
 	"github.com/galo/moloon/rte"
@@ -13,14 +13,14 @@ import (
 // FunctionResource implements account management handler.
 type FaaSResource struct {
 	store database.FunctionStore
-	rte rte.Runtime
+	rte   rte.Runtime
 }
 
 // NewFunctionResource creates and returns an account resource.
 func NewFaaSResource(store database.FunctionStore, rte rte.Runtime) *FaaSResource {
 	return &FaaSResource{
 		store: store,
-		rte: rte,
+		rte:   rte,
 	}
 }
 
@@ -48,17 +48,17 @@ func (rs *FaaSResource) router() *chi.Mux {
 func (rs *FaaSResource) instantiate(w http.ResponseWriter, r *http.Request) {
 	functionName := chi.URLParam(r, "functionName")
 	if functionName == "" {
-		_ = render.Render(w, r, functions.ErrNotFound)
+		_ = render.Render(w, r, error2.ErrNotFound)
 		return
 	}
 
 	f, err := rs.store.Get(functionName)
 	if err == models.ErrFunctionNotfound {
-		_ = render.Render(w, r, functions.ErrNotFound)
+		_ = render.Render(w, r, error2.ErrNotFound)
 		return
 	}
 	if err != nil {
-		_ = render.Render(w, r, functions.ErrInternalServerError)
+		_ = render.Render(w, r, error2.ErrInternalServerError)
 		return
 	}
 

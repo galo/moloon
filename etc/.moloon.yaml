@@ -1,0 +1,6 @@
+discovery:
+      config: file
+      agents: http://agent1:3000/
+
+
+

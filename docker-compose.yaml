@@ -1,17 +1,8 @@
 version: "3"
 services:
-  moloon-agent:
+  agent:
     image:  r.jdkr.io/galo/moloon
-    container_name: moloon
-    build:
-      context: .
-      args:
-        - NO_PROXY
-        - HTTP_PROXY
-        - HTTPS_PROXY
-        - no_proxy
-        - http_proxy
-        - https_proxy      
+    container_name: agent
     environment:
       - NO_PROXY
       - HTTP_PROXY
@@ -20,7 +11,26 @@ services:
       - http_proxy
       - https_proxy
     ports:
-      - "3000:3000" # httpdoc
+      - "3000:3000" # http
     entrypoint:
       - /go/bin/moloon
       - server
+  controller:
+      image:  r.jdkr.io/galo/moloon
+      container_name: controller
+      environment:
+        - NO_PROXY
+        - HTTP_PROXY
+        - HTTPS_PROXY
+        - no_proxy
+        - http_proxy
+        - https_proxy
+        - DISCOVERY_CONFIG=file
+        - DISCOVERY_AGENTS="http://agent:3000/"
+      ports:
+        - "3001:3000" # http
+      entrypoint:
+        - /go/bin/moloon
+        - controller
+      links:
+          - agent

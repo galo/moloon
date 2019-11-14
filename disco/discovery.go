@@ -17,15 +17,19 @@ func NewDiscoveryService() DiscoveryService {
 	var d DiscoveryService
 
 	// determine the discovery service
-	switch viper.GetString("discovery") {
+	switch ds := viper.GetString("discovery.config"); ds {
 	case "kubernetes":
+		log.Println("Setting up Kubernetes discovery")
 		url := viper.GetString("kubernetes_url")
 		// Kubernetes in cluster
 		d = NewKubernetesDiscoveryService(url)
-	case "config":
-		url := viper.GetString("agent_list")
+	case "file":
+		log.Println("Setting up file based discovery")
+		//url := viper.GetString("agent_url")
 		// Kubernetes in cluster
-		d = NewKubernetesDiscoveryService(url)
+		a := viper.GetString("discovery.agents")
+		log.Printf("Add agent %v for discovery \n", a)
+		d = NewConfigDiscovery("http://agent:3000/")
 	default:
 		log.Fatal("Discovery not supported ")
 	}
