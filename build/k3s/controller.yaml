@@ -1,1 +1,40 @@
-package k3s
+# Moloon service
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: moloon-controler
+  name: moloon-controler
+spec:
+  ports:
+  - port: 3000
+    targetPort: 3000
+    name: http
+  selector:
+    app: moloon-controler
+---
+# Moloon deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moloon-controler-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moloon-controler
+  template:
+    metadata:
+      labels:
+        app: moloon-controler
+        version: 1.0.0        
+    spec:
+      containers:
+      - name: meme
+        image: r.jdkr.io/galo/moloon:1.0.0
+        args: ["controller"] 
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DISCOVERY_CONFIG
+          value: kubernetes
