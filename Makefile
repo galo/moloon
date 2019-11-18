@@ -7,9 +7,9 @@ build: clean
 	$(ENVVAR) go build
 
 build-linux: clean
-	$(ENVVAR) GOOS=linux go build 
+	$(ENVVAR) GOOS=linux GOARCH=amd64 CGO_ENABLE=1 go build 
 
-container: build-linux
+container:
 	docker build \
 	--build-arg http_proxy=$(http_proxy) \
 	--build-arg https_proxy=$(https_proxy) \
