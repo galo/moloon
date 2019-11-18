@@ -7,7 +7,7 @@ build: clean
 	$(ENVVAR) go build
 
 build-linux: clean
-	$(ENVVAR) GOOS=linux GOARCH=amd64 CGO_ENABLE=1 go build 
+	$(ENVVAR) GOOS=linux go build 
 
 container:
 	docker build \
