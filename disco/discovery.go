@@ -29,11 +29,11 @@ func NewDiscoveryService() DiscoveryService {
 	// File configured discovery
 	case "file":
 		log.Println("Setting up file based discovery")
-		//url := viper.GetString("agent_url")
-		// Kubernetes in cluster
+
+		// TODO: actually use a list of agents instead of only 1
 		a := viper.GetString("discovery_agents")
 		log.Printf("Add agent %v for discovery \n", a)
-		d = NewConfigDiscovery("http://agent:3000/")
+		d = NewConfigDiscovery(a)
 
 	default:
 		log.Fatal("Discovery not supported ")

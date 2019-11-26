@@ -1,9 +1,13 @@
 package models
 
 import (
+	"bytes"
 	"encoding/json"
-	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"log"
+	"net/http"
+
+	"gopkg.in/yaml.v2"
 )
 
 type Agent struct {
@@ -16,7 +20,7 @@ type AgentSpec struct {
 	Uri string `json:"uri,omitempty"`
 }
 
-// NewFunction is a function factory that creates the barebone function
+// NewAgent is a function factory that creates the barebone agents
 func NewAgent(name string, uri string) *Agent {
 	var a = APIHeader{APIVersion: "v1", Kind: "agent"}
 	var m = Metadata{name, make(map[string]string)}
@@ -37,10 +41,29 @@ func (a *Agent) YamlMarshal() (data []byte, err error) {
 	return
 }
 
-// YamlUnmarshal ummarshals the YAML into an api object.
+// YamlUnmarshal ummarshals the YAML into an agent object.
 func (a *Agent) YamlUnmarshal(data []byte) (err error) {
 	if err = yaml.Unmarshal(data, &a); err != nil {
 		log.Println("Failed to convert yaml file into a agent object.")
 	}
 	return
+}
+
+// CreateFunction creates a function on all agent
+func (a *Agent) CreateFunction(function Function) (err error) {
+	jsonFunction, err := function.JSONMarshal()
+	if err != nil {
+		return err
+	}
+
+	var createFunctionUrl = a.Spec.Uri + "/api/v1/functions"
+	response, err := http.Post(createFunctionUrl, "application/json", bytes.NewBuffer(jsonFunction))
+	if err != nil {
+		log.Fatalf("The HTTP request failed with error %s\n", err)
+		return err
+	} else {
+		data, _ := ioutil.ReadAll(response.Body)
+		log.Println(string(data))
+	}
+	return nil
 }
