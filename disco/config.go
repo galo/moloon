@@ -1,14 +1,24 @@
 package disco
 
-import "github.com/galo/moloon/models"
+import (
+	"github.com/galo/moloon/logging"
+	"github.com/galo/moloon/models"
+	"net/url"
+)
 
 // ConfigDiscovery is a static list of Agents
 type ConfigDiscovery struct {
 	agentsList []*models.Agent
 }
 
-func NewConfigDiscovery(url string) *ConfigDiscovery {
-	a := models.NewAgent("agent-1", url)
+func NewConfigDiscovery(agentsConfig string) *ConfigDiscovery {
+	u, err := url.Parse(agentsConfig)
+	if err != nil {
+		logging.Logger.Errorf("Error parsing agents config %v", agentsConfig, err)
+		return &ConfigDiscovery{}
+	}
+
+	a := models.NewAgent(u.Hostname(), u.String())
 	al := []*models.Agent{a}
 
 	return &ConfigDiscovery{al}

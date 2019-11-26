@@ -26,7 +26,7 @@ services:
         # - http_proxy
         # - https_proxy
         - DISCOVERY_CONFIG=file
-        - DISCOVERY_AGENTS="http://agent:3000/"
+        - DISCOVERY_AGENTS=`http://agent:3000/`
       ports:
         - "3002:3000" # http
       entrypoint:

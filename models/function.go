@@ -3,7 +3,6 @@ package models
 
 import (
 	"encoding/json"
-	"errors"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
@@ -48,10 +47,3 @@ func (f *Function) YamlUnmarshal(data []byte) (err error) {
 	}
 	return
 }
-
-// The list of error types returned from account resource.
-var (
-	ErrFunctionValidation = errors.New("function validation error")
-	ErrFunctionNotfound   = errors.New("function not found")
-	ErrInternalError      = errors.New("unknown internal error")
-)

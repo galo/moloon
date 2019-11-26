@@ -61,6 +61,9 @@ func (a *Agent) CreateFunction(function Function) (err error) {
 	if err != nil {
 		log.Fatalf("The HTTP request failed with error %s\n", err)
 		return err
+	} else if response.StatusCode != 200 {
+		log.Fatalf("The HTTP request failed with error %v\n", response.StatusCode)
+		return ErrInternalError
 	} else {
 		data, _ := ioutil.ReadAll(response.Body)
 		log.Println(string(data))

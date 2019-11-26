@@ -1,19 +1,88 @@
-# Moloon - distributed serverless Edge
+# Moloon - distributed serverless at the Edge
 
 ## Building
 
 ```bash
+make
 docker-compose build
 ```
 
 ## Configuration
 
-Moolon can be configured using a config file or enviroment variables, for instance
+Moolon can be configured using a config file or environment variables. By default the $HOME/.moolon.yaml will be 
+used, but you can specify other locations, for instance
 
 ```bash
 moloon controller --config ./etc/.moloon.yaml
 ```
 
+
+## Agent and Controller
+
+Moolon is composed of a controller, and a number of agents. Agent discovery can done using Kubernetes or a static 
+configuration file. For static configuration use DISCOVERY_CONFIG=file and DISCOVERY_AGENTS=https://agent1:port,https:agent2:port 
+
+To start an agent, do
+ 
+```bash
+moloon server
+```
+
+To start a controller
+
+```bash
+moloon controller 
+```
+
+## Sample
+
+We will stat running Moloon on docker-compose , running a single controller an agent.
+
+```bash
+docker-compose
+```
+
+Then we will start creating a sample function, _helloworld_ that will execute a simple 
+container bases function.
+
+```bash
+curl -X POST \
+  http://localhost:3000/api/v1/controller/functions \
+  -H 'Content-Type: application/json' \
+  -H 'Host: localhost:3000' \
+  -d '{
+    "kind": "function",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "helloworld"
+    },
+    "spec": {
+        "image": "hello-world",
+        "lang": "docker"
+    }
+}
+'
+```
+
+```bash
+curl -X GET \
+  http://localhost:3001/api/v1/functions \
+  -H 'Accept: */*' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Connection: keep-alive' \
+  -H 'Host: localhost:3001' \
+  -H 'cache-control: no-cache'
+
+```
+```bash
+curl -X PUT \
+  http://localhost:3001/faas/v1/faas/helloworld \
+  -H 'Accept: */*' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Length: 0' \
+  -H 'Host: localhost:3001' \
+```
 
 ### Environment Variables
 
