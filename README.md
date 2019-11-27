@@ -42,6 +42,13 @@ We will stat running Moloon on docker-compose , running a single controller an a
 docker-compose
 ```
 
+Check which agents are available on the controller.
+
+```bash
+curl -X GET \
+  http://localhost:3000/api/v1/controller/agents 
+```
+
 Then we will start creating a sample function, _helloworld_ that will execute a simple 
 container bases function.
 
@@ -49,7 +56,6 @@ container bases function.
 curl -X POST \
   http://localhost:3000/api/v1/controller/functions \
   -H 'Content-Type: application/json' \
-  -H 'Host: localhost:3000' \
   -d '{
     "kind": "function",
     "apiVersion": "v1",
@@ -64,24 +70,18 @@ curl -X POST \
 '
 ```
 
+You can access the agent directly and check the functions are registered
+
 ```bash
 curl -X GET \
-  http://localhost:3001/api/v1/functions \
-  -H 'Accept: */*' \
-  -H 'Cache-Control: no-cache' \
-  -H 'Connection: keep-alive' \
-  -H 'Host: localhost:3001' \
-  -H 'cache-control: no-cache'
-
+  http://localhost:3000/api/v1/functions 
 ```
+
+Finally you can execute the function in the agent.
+
 ```bash
 curl -X PUT \
-  http://localhost:3001/faas/v1/faas/helloworld \
-  -H 'Accept: */*' \
-  -H 'Cache-Control: no-cache' \
-  -H 'Connection: keep-alive' \
-  -H 'Content-Length: 0' \
-  -H 'Host: localhost:3001' \
+  http://localhost:3001/faas/v1/faas/helloworld 
 ```
 
 ### Environment Variables
