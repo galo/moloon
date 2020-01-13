@@ -1,4 +1,5 @@
 FROM golang:1.13-alpine as builder
+LABEL maintainer="galo@hp.com"
 
 RUN apk update && apk add --virtual build-dependencies build-base gcc wget
 
