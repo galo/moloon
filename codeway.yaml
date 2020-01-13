@@ -47,6 +47,6 @@ stages:
           parameters:
             registry: 'harbor'
             project: 'wyplash'
-            repo: 'imager'
+            repo: 'moloon'
             tags: |
-              1.0 
+              1.0.0 
