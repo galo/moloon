@@ -1,4 +1,4 @@
-// Package app ties together application resources and handlers.
+// Package controller implemnets the APIs
 package controller
 
 import (
