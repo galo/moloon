@@ -145,7 +145,7 @@ func (rs *ControllerResource) createFunction(w http.ResponseWriter, r *http.Requ
 	for _, a := range agents {
 		err = a.CreateFunction(*data.Function)
 		if err != nil {
-			logging.Logger.Printf("Error creating agent", err)
+			logging.Logger.Printf("Error creating agent %v", err)
 			render.Render(w, r, error2.ErrInvalidRequest(err))
 		}
 	}
