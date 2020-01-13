@@ -9,18 +9,18 @@ import (
 	"k8s.io/client-go/rest"
 )
 
+// KubernetesDiscovery the K8s discovery service
 type KubernetesDiscovery struct {
 	k8sServer string
 }
 
-// Creates a new Kubernetes discovery service,
-// url points ot the K8s cluster, use nil to use
-// in cluster discovery.
+// NewKubernetesDiscoveryService Creates a new Kubernetes discovery service, The url points ot the K8s cluster,
+// use nil to use in cluster discovery.
 func NewKubernetesDiscoveryService(url string) *KubernetesDiscovery {
 	return &KubernetesDiscovery{url}
 }
 
-// Get all agents running on a cluster
+// GetAll Get all agents running on a cluster
 func (k *KubernetesDiscovery) GetAll() ([]*models.Agent, error) {
 
 	// creates the in-cluster config
