@@ -1,7 +1,7 @@
 version: "3"
 services:
   agent:
-    image:  r.jdkr.io/galo/moloon:1.0.0
+    image:  gcr.io/print-cloud-software/moloon:1.0.0
     container_name: agent
     # environment:
     #   - NO_PROXY
@@ -16,7 +16,7 @@ services:
       - /go/bin/moloon
       - server
   controller:
-      image:  r.jdkr.io/galo/moloon:1.0.0
+      image:  gcr.io/print-cloud-software/moloon:1.0.0
       container_name: controller
       environment:
         # - NO_PROXY
