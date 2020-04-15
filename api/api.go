@@ -55,7 +55,7 @@ func New(isController bool) (*chi.Mux, error) {
 		logger.WithField("module", "controller").Infoln("Starting controller")
 
 		r.Group(func(r chi.Router) {
-			r.Mount("/api", controllerAPI.Router())
+			r.Mount("/controller", controllerAPI.Router())
 		})
 	} else {
 		// Functions controller
@@ -75,7 +75,7 @@ func New(isController bool) (*chi.Mux, error) {
 		logger.WithField("module", "agent").Infoln("Starting agent")
 
 		r.Group(func(r chi.Router) {
-			r.Mount("/api", functionAPI.Router())
+			r.Mount("/agent", functionAPI.Router())
 		})
 
 		r.Group(func(r chi.Router) {
