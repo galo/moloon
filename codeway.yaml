@@ -32,7 +32,7 @@ stages:
       displayName: LinandTest
       pool: CodeWay-Ubuntu-EC2
       steps: 
-        - template: steps/golang-lint-test-coverage-v1.yaml@templates
+        - template: /steps/golang/lint-test-coverage-v1.yaml
           parameters:
             gheUser: $(ghe_user)
             gheToken: $(ghe_auth_token)
