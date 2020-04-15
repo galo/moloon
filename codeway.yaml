@@ -30,7 +30,7 @@ stages:
   jobs:
     - job: LintandTest
       displayName: LinandTest
-      pool: CodeWay-Ubuntu-EC2
+      pool: CodeWayAWSLinux
       steps: 
         - template: /steps/golang/lint-test-coverage-v1.yaml@templates
           parameters:
