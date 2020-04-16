@@ -14,10 +14,10 @@ services:
       - "3001:3000" # http
     entrypoint:
       - /go/bin/moloon
-      - server
+      - agent
   master:
       image:  gcr.io/print-cloud-software/moloon:1.0.0
-      container_name: mastermake
+      container_name: master
       environment:
         # - NO_PROXY
         # - HTTP_PROXY
@@ -25,12 +25,12 @@ services:
         # - no_proxy
         # - http_proxy
         # - https_proxy
-        - DISCOVERY_CONFIG=file
-        - DISCOVERY_AGENTS=`http://agent:3000/`
+        - DISCOVERY_CONFIG=static
+        - DISCOVERY_AGENTS=http://agent:3000
       ports:
         - "3002:3000" # http
       entrypoint:
         - /go/bin/moloon
-        - controller
+        - master
       links:
           - agent

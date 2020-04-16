@@ -27,8 +27,8 @@ func NewDiscoveryService() DiscoveryService {
 		d = NewKubernetesDiscoveryService(url)
 
 	// File configured discovery
-	case "file":
-		log.Println("Setting up file based discovery")
+	case "static":
+		log.Println("Setting up static based discovery")
 
 		// TODO: actually use a list of agents instead of only 1
 		a := viper.GetString("discovery_agents")
