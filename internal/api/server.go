@@ -18,9 +18,9 @@ type Server struct {
 
 // NewServer creates and configures an APIServer serving all application routes.
 // isController determines the API set to  provide
-func NewServer(isController bool) (*Server, error) {
+func NewServer(isMaster bool) (*Server, error) {
 	log.Println("configuring server...")
-	api, err := New(isController)
+	api, err := New(isMaster)
 	if err != nil {
 		return nil, err
 	}

@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/galo/moloon/internal/api/controller"
 	"github.com/galo/moloon/internal/api/faas"
+	controller "github.com/galo/moloon/internal/api/master"
 	"github.com/galo/moloon/internal/database"
 
 	"github.com/galo/moloon/internal/api/functions"
@@ -19,9 +19,9 @@ import (
 )
 
 // New configures application resources and routes.The
-// isController parameter determines if we run in discovery mode
+// isMaster parameter determines if we run in discovery mode
 // discoService determines the discovery backend to use
-func New(isController bool) (*chi.Mux, error) {
+func New(isMaster bool) (*chi.Mux, error) {
 	logger := logging.NewLogger()
 
 	// Setup the DB
@@ -43,9 +43,9 @@ func New(isController bool) (*chi.Mux, error) {
 	// use CORS middleware if client is not served by this api, e.g. from other domain or CDN
 	// r.Use(corsConfig().Handler)
 
-	// When running in controller mode, activate the controller API
-	if isController {
-		// Controller controller
+	// When running in master mode, activate the master API
+	if isMaster {
+		// master controller
 		controllerAPI, err := controller.NewAPI(db)
 		if err != nil {
 			logger.WithField("module", "controller").Error(err)
