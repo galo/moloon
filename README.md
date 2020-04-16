@@ -1,5 +1,7 @@
 # Moloon - distributed serverless at the Edge
 
+![Go](https://github.com/galo/moloon/workflows/Go/badge.svg)
+
 ## Building
 
 ```bash
@@ -46,7 +48,7 @@ Check which agents are available on the controller.
 
 ```bash
 curl -X GET \
-  http://localhost:3000/api/v1/controller/agents 
+  http://localhost:3002/api/v1/controller/agents 
 ```
 
 Then we will start creating a sample function, _helloworld_ that will execute a simple 
@@ -54,7 +56,7 @@ container bases function.
 
 ```bash
 curl -X POST \
-  http://localhost:3000/api/v1/controller/functions \
+  http://localhost:3002/api/v1/controller/functions \
   -H 'Content-Type: application/json' \
   -d '{
     "kind": "function",
@@ -74,7 +76,7 @@ You can access the agent directly and check the functions are registered
 
 ```bash
 curl -X GET \
-  http://localhost:3000/api/v1/functions 
+  http://localhost:3001/api/v1/functions 
 ```
 
 Finally you can execute the function in the agent.
@@ -98,7 +100,7 @@ AUTH_LOGIN_TOKEN_EXPIRY | time.Duration | 11m | login token expiry
 AUTH_JWT_SECRET | string | random | jwt sign and verify key - value "random" creates random 32 char secret at startup (and automatically invalidates existing tokens on app restarts, so during dev you might want to set a fixed value here)
 AUTH_JWT_EXPIRY | time.Duration | 15m | jwt access token expiry
 AUTH_JWT_REFRESH_EXPIRY | time.Duration | 1h | jwt refresh token expiry
-DISCOVERY_CONFIG | string | kubernetes, or file 
+DISCOVERY_CONFIG | string | kubernetes, or file
 
 ## Kubernetes dependencies
 
