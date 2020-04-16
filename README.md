@@ -45,7 +45,7 @@ Check which agents are available on the controller.
 
 ```bash
 curl -X GET \
-  http://localhost:3002/api/v1/controller/agents 
+  http://localhost:3002/api/v1/master/agents 
 ```
 
 Then we will start creating a sample function, _helloworld_ that will execute a simple 

@@ -55,7 +55,7 @@ func New(isMaster bool) (*chi.Mux, error) {
 		logger.WithField("module", "master").Infoln("Starting master")
 
 		r.Group(func(r chi.Router) {
-			r.Mount("/master", masterCtl.Router())
+			r.Mount("/api", masterCtl.Router())
 		})
 	} else {
 		// Functions master
@@ -75,7 +75,7 @@ func New(isMaster bool) (*chi.Mux, error) {
 		logger.WithField("module", "agent").Infoln("Starting agent")
 
 		r.Group(func(r chi.Router) {
-			r.Mount("/agent", functionAPI.Router())
+			r.Mount("/api", functionAPI.Router())
 		})
 
 		r.Group(func(r chi.Router) {
