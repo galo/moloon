@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/jwtauth"
 	"github.com/go-chi/render"
 
-	"github.com/galo/moloon/logging"
+	"github.com/galo/moloon/internal/logging"
 )
 
 type ctxKey int

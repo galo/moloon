@@ -13,7 +13,6 @@ require (
 	github.com/go-chi/jwtauth v4.0.3+incompatible
 	github.com/go-chi/render v1.0.1
 	github.com/go-ozzo/ozzo-validation v3.5.0+incompatible
-	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/mattn/go-sqlite3 v1.11.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/sirupsen/logrus v1.4.2
