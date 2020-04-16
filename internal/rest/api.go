@@ -1,17 +1,17 @@
 // Package api configures an http server for administration and application resources.
-package api
+package rest
 
 import (
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/galo/moloon/internal/api/faas"
-	controller "github.com/galo/moloon/internal/api/master"
 	"github.com/galo/moloon/internal/database"
+	"github.com/galo/moloon/internal/rest/faas"
+	master "github.com/galo/moloon/internal/rest/master"
 
-	"github.com/galo/moloon/internal/api/functions"
 	"github.com/galo/moloon/internal/logging"
+	"github.com/galo/moloon/internal/rest/functions"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
@@ -45,27 +45,27 @@ func New(isMaster bool) (*chi.Mux, error) {
 
 	// When running in master mode, activate the master API
 	if isMaster {
-		// master controller
-		controllerAPI, err := controller.NewAPI(db)
+		// master master
+		masterCtl, err := master.NewAPI(db)
 		if err != nil {
-			logger.WithField("module", "controller").Error(err)
+			logger.WithField("module", "master").Error(err)
 			return nil, err
 		}
 
-		logger.WithField("module", "controller").Infoln("Starting controller")
+		logger.WithField("module", "master").Infoln("Starting master")
 
 		r.Group(func(r chi.Router) {
-			r.Mount("/controller", controllerAPI.Router())
+			r.Mount("/master", masterCtl.Router())
 		})
 	} else {
-		// Functions controller
+		// Functions master
 		functionAPI, err := functions.NewAPI(db)
 		if err != nil {
 			logger.WithField("module", "agent").Error(err)
 			return nil, err
 		}
 
-		// FaaS runtime controller
+		// FaaS runtime master
 		faasAPI, err := faas.NewAPI(db)
 		if err != nil {
 			logger.WithField("module", "agent").Error(err)

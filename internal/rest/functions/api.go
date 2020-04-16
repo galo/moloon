@@ -21,14 +21,14 @@ const (
 
 // API provides application resources and handlers.
 type API struct {
-	FunctionRsc *FunctionResource
+	FunctionRsc *Controller
 }
 
 // NewAPI configures and returns application API.
 func NewAPI(db *sql.DB) (*API, error) {
 	//accountStore := database.NewAccountStore(db)
 
-	functionRsrc := NewFunctionResource(database.NewFunctionStore(db))
+	functionRsrc := NewFunctionController(database.NewFunctionStore(db))
 
 	api := &API{
 		FunctionRsc: functionRsrc,

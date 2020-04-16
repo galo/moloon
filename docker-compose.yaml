@@ -15,9 +15,9 @@ services:
     entrypoint:
       - /go/bin/moloon
       - server
-  controller:
+  master:
       image:  gcr.io/print-cloud-software/moloon:1.0.0
-      container_name: controller
+      container_name: master
       environment:
         # - NO_PROXY
         # - HTTP_PROXY

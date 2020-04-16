@@ -3,27 +3,27 @@ package functions
 import (
 	"net/http"
 
-	error2 "github.com/galo/moloon/internal/api/error"
 	"github.com/galo/moloon/internal/database"
+	error2 "github.com/galo/moloon/internal/rest/error"
 
 	"github.com/galo/moloon/pkg/models"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 )
 
-// FunctionResource implements account management handler.
-type FunctionResource struct {
+// Controller implements account management handler.
+type Controller struct {
 	Store database.FunctionStore
 }
 
-// NewFunctionResource creates and returns an account resource.
-func NewFunctionResource(store database.FunctionStore) *FunctionResource {
-	return &FunctionResource{
+// NewFunctionController creates and returns an account resource.
+func NewFunctionController(store database.FunctionStore) *Controller {
+	return &Controller{
 		Store: store,
 	}
 }
 
-func (rs *FunctionResource) router() *chi.Mux {
+func (rs *Controller) router() *chi.Mux {
 	//auth, err := jwt.NewTokenAuth()
 	//if err != nil {
 	//	logging.Logger.Panic(err)
@@ -47,7 +47,7 @@ func (rs *FunctionResource) router() *chi.Mux {
 	return r
 }
 
-//func (rs *FunctionResource) functionCtx(next http.Handler) http.Handler {
+//func (rs *Controller) functionCtx(next http.Handler) http.Handler {
 //	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 //		functionName := chi.URLParam(r, "functionName")
 //		if functionName == "" {
@@ -102,7 +102,7 @@ func newFunctionListResponse(fns []*models.Function) []render.Renderer {
 	return list
 }
 
-func (rs *FunctionResource) get(w http.ResponseWriter, r *http.Request) {
+func (rs *Controller) get(w http.ResponseWriter, r *http.Request) {
 	functionName := chi.URLParam(r, "functionName")
 	if functionName == "" {
 		_ = render.Render(w, r, error2.ErrNotFound)
@@ -122,7 +122,7 @@ func (rs *FunctionResource) get(w http.ResponseWriter, r *http.Request) {
 	render.Respond(w, r, newFunctionResponse(f))
 }
 
-func (rs *FunctionResource) create(w http.ResponseWriter, r *http.Request) {
+func (rs *Controller) create(w http.ResponseWriter, r *http.Request) {
 	data := &newFunctionRequest{}
 	if err := render.Bind(r, data); err != nil {
 		render.Render(w, r, error2.ErrInvalidRequest(err))
@@ -135,7 +135,7 @@ func (rs *FunctionResource) create(w http.ResponseWriter, r *http.Request) {
 	render.Respond(w, r, newFunctionResponse(data.Function))
 }
 
-func (rs *FunctionResource) delete(w http.ResponseWriter, r *http.Request) {
+func (rs *Controller) delete(w http.ResponseWriter, r *http.Request) {
 	functionName := chi.URLParam(r, "functionName")
 	if functionName == "" {
 		_ = render.Render(w, r, error2.ErrNotFound)
@@ -160,7 +160,7 @@ func (rs *FunctionResource) delete(w http.ResponseWriter, r *http.Request) {
 	render.Respond(w, r, http.NoBody)
 }
 
-func (rs *FunctionResource) list(w http.ResponseWriter, r *http.Request) {
+func (rs *Controller) list(w http.ResponseWriter, r *http.Request) {
 	fns, err := rs.Store.GetAll()
 	if err == models.ErrFunctionNotfound {
 		_ = render.Render(w, r, error2.ErrNotFound)
