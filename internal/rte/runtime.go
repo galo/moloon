@@ -2,7 +2,8 @@ package rte
 
 import (
 	"errors"
-	"github.com/galo/moloon/models"
+
+	"github.com/galo/moloon/pkg/models"
 )
 
 // Runtime errors

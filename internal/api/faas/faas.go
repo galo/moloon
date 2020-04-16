@@ -1,13 +1,14 @@
 package faas
 
 import (
-	error2 "github.com/galo/moloon/api/error"
-	"github.com/galo/moloon/database"
-	"github.com/galo/moloon/models"
-	"github.com/galo/moloon/rte"
+	"net/http"
+
+	error2 "github.com/galo/moloon/internal/api/error"
+	"github.com/galo/moloon/internal/database"
+	"github.com/galo/moloon/internal/rte"
+	"github.com/galo/moloon/pkg/models"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"net/http"
 )
 
 // FunctionResource implements account management handler.

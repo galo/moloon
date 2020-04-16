@@ -1,9 +1,10 @@
 package disco
 
 import (
-	"github.com/galo/moloon/logging"
-	"github.com/galo/moloon/models"
 	"net/url"
+
+	"github.com/galo/moloon/internal/logging"
+	"github.com/galo/moloon/pkg/models"
 )
 
 // ConfigDiscovery is a static list of Agents

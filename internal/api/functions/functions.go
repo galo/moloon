@@ -1,11 +1,12 @@
 package functions
 
 import (
-	error2 "github.com/galo/moloon/api/error"
-	"github.com/galo/moloon/database"
 	"net/http"
 
-	"github.com/galo/moloon/models"
+	error2 "github.com/galo/moloon/internal/api/error"
+	"github.com/galo/moloon/internal/database"
+
+	"github.com/galo/moloon/pkg/models"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 )

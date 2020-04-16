@@ -1,15 +1,14 @@
-// Package app ties together application resources and handlers.
-
-package faas
+// Package controller implemnets the APIs
+package controller
 
 import (
 	"database/sql"
-	"github.com/galo/moloon/database"
-	"github.com/galo/moloon/logging"
-	"github.com/galo/moloon/rte"
+	"net/http"
+
+	"github.com/galo/moloon/internal/database"
+	"github.com/galo/moloon/internal/logging"
 	"github.com/go-chi/chi"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 type ctxKey int
@@ -21,16 +20,16 @@ const (
 
 // API provides application resources and handlers.
 type API struct {
-	FaaSRsc *FaaSResource
+	controllerResource *ControllerResource
 }
 
-// NewAPI configures and returns application API.
+// NewAPI configures and returns application API - based on a function
+// store and agent discovery service
 func NewAPI(db *sql.DB) (*API, error) {
-	functionRsrc := NewFaaSResource(database.NewFunctionStore(db),
-		rte.NewDockerRuntime())
+	controllerResource := NewControllerResource(database.NewFunctionStore(db))
 
 	api := &API{
-		FaaSRsc: functionRsrc,
+		controllerResource: controllerResource,
 	}
 	return api, nil
 }
@@ -39,7 +38,7 @@ func NewAPI(db *sql.DB) (*API, error) {
 func (a *API) Router() *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Mount("/v1/faas", a.FaaSRsc.router())
+	r.Mount("/v1/controller", a.controllerResource.router())
 
 	return r
 }

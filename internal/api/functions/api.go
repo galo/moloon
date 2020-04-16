@@ -1,13 +1,15 @@
-// Package controller implemnets the APIs
-package controller
+// Package app ties together application resources and handlers.
+
+package functions
 
 import (
 	"database/sql"
-	"github.com/galo/moloon/database"
-	"github.com/galo/moloon/logging"
+	"net/http"
+
+	"github.com/galo/moloon/internal/database"
+	"github.com/galo/moloon/internal/logging"
 	"github.com/go-chi/chi"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 type ctxKey int
@@ -19,16 +21,17 @@ const (
 
 // API provides application resources and handlers.
 type API struct {
-	controllerResource *ControllerResource
+	FunctionRsc *FunctionResource
 }
 
-// NewAPI configures and returns application API - based on a function
-// store and agent discovery service
+// NewAPI configures and returns application API.
 func NewAPI(db *sql.DB) (*API, error) {
-	controllerResource := NewControllerResource(database.NewFunctionStore(db))
+	//accountStore := database.NewAccountStore(db)
+
+	functionRsrc := NewFunctionResource(database.NewFunctionStore(db))
 
 	api := &API{
-		controllerResource: controllerResource,
+		FunctionRsc: functionRsrc,
 	}
 	return api, nil
 }
@@ -37,7 +40,7 @@ func NewAPI(db *sql.DB) (*API, error) {
 func (a *API) Router() *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Mount("/v1/controller", a.controllerResource.router())
+	r.Mount("/v1/functions", a.FunctionRsc.router())
 
 	return r
 }

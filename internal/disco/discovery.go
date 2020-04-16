@@ -3,7 +3,7 @@ package disco
 import (
 	"log"
 
-	"github.com/galo/moloon/models"
+	"github.com/galo/moloon/pkg/models"
 	"github.com/spf13/viper"
 )
 

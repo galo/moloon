@@ -1,6 +1,6 @@
 package database
 
-import "github.com/galo/moloon/models"
+import "github.com/galo/moloon/pkg/models"
 
 // FunctionStore defines database operations for account.
 type FunctionStore interface {

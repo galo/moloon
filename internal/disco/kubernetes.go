@@ -3,7 +3,7 @@ package disco
 import (
 	"log"
 
-	"github.com/galo/moloon/models"
+	"github.com/galo/moloon/pkg/models"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"

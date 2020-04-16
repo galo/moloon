@@ -1,14 +1,16 @@
 // Package app ties together application resources and handlers.
 
-package functions
+package faas
 
 import (
 	"database/sql"
-	"github.com/galo/moloon/database"
-	"github.com/galo/moloon/logging"
+	"net/http"
+
+	"github.com/galo/moloon/internal/database"
+	"github.com/galo/moloon/internal/logging"
+	"github.com/galo/moloon/internal/rte"
 	"github.com/go-chi/chi"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 type ctxKey int
@@ -20,17 +22,16 @@ const (
 
 // API provides application resources and handlers.
 type API struct {
-	FunctionRsc *FunctionResource
+	FaaSRsc *FaaSResource
 }
 
 // NewAPI configures and returns application API.
 func NewAPI(db *sql.DB) (*API, error) {
-	//accountStore := database.NewAccountStore(db)
-
-	functionRsrc := NewFunctionResource(database.NewFunctionStore(db))
+	functionRsrc := NewFaaSResource(database.NewFunctionStore(db),
+		rte.NewDockerRuntime())
 
 	api := &API{
-		FunctionRsc: functionRsrc,
+		FaaSRsc: functionRsrc,
 	}
 	return api, nil
 }
@@ -39,7 +40,7 @@ func NewAPI(db *sql.DB) (*API, error) {
 func (a *API) Router() *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Mount("/v1/functions", a.FunctionRsc.router())
+	r.Mount("/v1/faas", a.FaaSRsc.router())
 
 	return r
 }

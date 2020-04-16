@@ -6,12 +6,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/galo/moloon/api/controller"
-	"github.com/galo/moloon/api/faas"
-	"github.com/galo/moloon/database"
+	"github.com/galo/moloon/internal/api/controller"
+	"github.com/galo/moloon/internal/api/faas"
+	"github.com/galo/moloon/internal/database"
 
-	"github.com/galo/moloon/api/functions"
-	"github.com/galo/moloon/logging"
+	"github.com/galo/moloon/internal/api/functions"
+	"github.com/galo/moloon/internal/logging"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"

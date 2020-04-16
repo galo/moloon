@@ -1,18 +1,18 @@
 package rte
 
 import (
-	"github.com/galo/moloon/models"
-	"github.com/galo/moloon/rte/environment"
 	"log"
+
+	"github.com/galo/moloon/internal/rte/environment"
+	"github.com/galo/moloon/pkg/models"
 )
 
 // Docker runtime implmnetations
 type DockerRte struct {
 }
 
-
 func NewDockerRuntime() *DockerRte {
-	return &DockerRte{};
+	return &DockerRte{}
 }
 
 //Executes a function in the docker inside docker runtime

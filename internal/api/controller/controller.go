@@ -1,15 +1,16 @@
 package controller
 
 import (
-	error2 "github.com/galo/moloon/api/error"
-	"github.com/galo/moloon/logging"
+	error2 "github.com/galo/moloon/internal/api/error"
+	"github.com/galo/moloon/internal/logging"
 
-	"github.com/galo/moloon/database"
-	"github.com/galo/moloon/disco"
-	"github.com/galo/moloon/models"
+	"net/http"
+
+	"github.com/galo/moloon/internal/database"
+	"github.com/galo/moloon/internal/disco"
+	"github.com/galo/moloon/pkg/models"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"net/http"
 )
 
 // ControllerResource the controller to manage agents and functions

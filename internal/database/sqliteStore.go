@@ -2,8 +2,9 @@ package database
 
 import (
 	"database/sql"
-	"github.com/galo/moloon/models"
 	"log"
+
+	"github.com/galo/moloon/pkg/models"
 )
 
 type FunctionStoreSQLite struct {
