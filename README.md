@@ -19,11 +19,10 @@ moloon controller --config .moloon.yaml
 
 ## Agent and Controller
 
-Moolon is composed of a controller, and a number of agents. Agent discovery can done using Kubernetes or a static 
-configuration file. For static configuration use DISCOVERY_CONFIG=file and DISCOVERY_AGENTS=https://agent1:port,https:agent2:port 
+Moolon is composed of a controller, and a number of agents. Agent discovery can done using Kubernetes or a static configuration file. For static configuration use DISCOVERY_CONFIG=file and DISCOVERY_AGENTS=https://agent1:port,https:agent2:port 
 
 To start an agent, do
- 
+
 ```bash
 moloon server
 ```
@@ -31,7 +30,7 @@ moloon server
 To start a controller
 
 ```bash
-moloon controller 
+moloon controller
 ```
 
 ## Sample
