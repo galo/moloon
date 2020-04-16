@@ -17,7 +17,7 @@ services:
       - server
   master:
       image:  gcr.io/print-cloud-software/moloon:1.0.0
-      container_name: master
+      container_name: mastermake
       environment:
         # - NO_PROXY
         # - HTTP_PROXY

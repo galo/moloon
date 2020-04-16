@@ -13,7 +13,7 @@ container:
 	docker build \
 	--build-arg http_proxy=$(http_proxy) \
 	--build-arg https_proxy=$(https_proxy) \
-	-t r.jdkr.io/galo/moloon:$(TAG) .
+	-t gcr.io/print-cloud-software/moloon:$(TAG) .
 
 clean-container: build-linux
 	docker build --no-cache --force-rm -t gcr.io/print-cloud-software/moloon:1.0.0:$(TAG) .
