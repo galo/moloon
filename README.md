@@ -11,13 +11,11 @@ docker-compose build
 
 ## Configuration
 
-Moolon can be configured using a config file or environment variables. By default the $HOME/.moolon.yaml will be 
-used, but you can specify other locations, for instance
+Moolon can be configured using a config file or environment variables. By default the $HOME/.moolon.yaml will be used, but you can specify other locations, for instance.
 
 ```bash
-moloon controller --config ./etc/.moloon.yaml
+moloon controller --config .moloon.yaml
 ```
-
 
 ## Agent and Controller
 
