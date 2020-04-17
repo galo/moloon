@@ -9,7 +9,6 @@
 *.dylib
 debug
 __debug_bin
-moloon
 
 # Test binary, build with `go test -c`
 *.test
