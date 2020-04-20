@@ -15,7 +15,7 @@ import (
 var once sync.Once
 
 // Seconds between refreshes
-const FREQ = 3
+const FREQ = 10
 
 // Singleton controller fo the Moloon master
 var (
@@ -43,21 +43,22 @@ func GetController(store database.FunctionStore, discoveryService disco.Discover
 
 // Starts the gorutine
 func (ctl *Controller) Start() {
+	glog.Infoln("Starting worker goruntine...")
 	go ctl.doWork()
 }
 
-// never ending loop
+// Never ending loop
 func (ctl *Controller) doWork() {
 	for {
 		ctl.syncAgents()
-
 		time.Sleep(FREQ * time.Second)
 	}
 
 }
 
+// Push functions on all Agents
 func (ctl *Controller) syncAgents() {
-	log.Println("syncing agents...")
+	glog.Infoln("Syncing agents...")
 	// Gets all agents
 	agents, err := ctl.DiscoveryService.GetAll()
 	if err != nil {
@@ -75,6 +76,7 @@ func (ctl *Controller) syncAgents() {
 	// Create functions on each agent
 	for _, f := range functions {
 		// Create the function on each agent
+
 		for _, a := range agents {
 			err = a.CreateFunction(*f)
 			if err != nil {
