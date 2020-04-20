@@ -1,9 +1,9 @@
-// Package app ties together application resources and handlers.
-
-package functions
+// Package controller implements the APIs
+package master
 
 import (
 	"database/sql"
+	"github.com/galo/moloon/internal/disco"
 	"net/http"
 
 	"github.com/galo/moloon/internal/database"
@@ -21,17 +21,15 @@ const (
 
 // API provides application resources and handlers.
 type API struct {
-	FunctionRsc *Controller
+	controllerResource *Resource
 }
 
-// NewAPI configures and returns application API.
-func NewAPI(db *sql.DB) (*API, error) {
-	//accountStore := database.NewAccountStore(db)
-
-	functionRsrc := NewFunctionController(database.NewFunctionStore(db))
-
+// NewAPI configures and returns application API - based on a function
+// store and agent discovery service
+func NewAPI(db *sql.DB, d disco.DiscoveryService) (*API, error) {
+	controllerResource := NewResource(database.GetFunctionStore(db), d)
 	api := &API{
-		FunctionRsc: functionRsrc,
+		controllerResource: controllerResource,
 	}
 	return api, nil
 }
@@ -40,7 +38,7 @@ func NewAPI(db *sql.DB) (*API, error) {
 func (a *API) Router() *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Mount("/v1/functions", a.FunctionRsc.router())
+	r.Mount("/v1/controller", a.controllerResource.router())
 
 	return r
 }

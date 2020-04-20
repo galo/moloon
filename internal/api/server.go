@@ -1,7 +1,10 @@
-package rest
+package api
 
 import (
 	"context"
+	"github.com/galo/moloon/internal/controller"
+	"github.com/galo/moloon/internal/database"
+	"github.com/galo/moloon/internal/disco"
 	"log"
 	"net/http"
 	"os"
@@ -17,9 +20,22 @@ type Server struct {
 }
 
 // NewServer creates and configures an APIServer serving all application routes.
-// isController determines the API set to  provide
+// isMaster determines the API set to  provide, and if enabled initializes the Moloon Controller
 func NewServer(isMaster bool) (*Server, error) {
 	log.Println("configuring server...")
+
+	if isMaster {
+		// Setup the DB
+		db, err := database.DBConn()
+		if err != nil {
+			log.Fatal("Db cannot be configured", err)
+		}
+
+		//Initialize the Moloon Controller
+		ctl := controller.GetController(database.GetFunctionStore(db), disco.NewDiscoveryService())
+		ctl.Start()
+	}
+
 	api, err := New(isMaster)
 	if err != nil {
 		return nil, err

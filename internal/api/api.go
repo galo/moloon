@@ -1,17 +1,18 @@
 // Package api configures an http server for administration and application resources.
-package rest
+package api
 
 import (
+	"github.com/galo/moloon/internal/disco"
 	"log"
 	"net/http"
 	"time"
 
+	"github.com/galo/moloon/internal/api/faas"
+	master "github.com/galo/moloon/internal/api/master"
 	"github.com/galo/moloon/internal/database"
-	"github.com/galo/moloon/internal/rest/faas"
-	master "github.com/galo/moloon/internal/rest/master"
 
+	"github.com/galo/moloon/internal/api/functions"
 	"github.com/galo/moloon/internal/logging"
-	"github.com/galo/moloon/internal/rest/functions"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
@@ -45,8 +46,11 @@ func New(isMaster bool) (*chi.Mux, error) {
 
 	// When running in master mode, activate the master API
 	if isMaster {
+		// get the discovery service
+		d := disco.NewDiscoveryService()
+
 		// master master
-		masterCtl, err := master.NewAPI(db)
+		masterAPI, err := master.NewAPI(db, d)
 		if err != nil {
 			logger.WithField("module", "master").Error(err)
 			return nil, err
@@ -55,7 +59,7 @@ func New(isMaster bool) (*chi.Mux, error) {
 		logger.WithField("module", "master").Infoln("Starting master")
 
 		r.Group(func(r chi.Router) {
-			r.Mount("/api", masterCtl.Router())
+			r.Mount("/api", masterAPI.Router())
 		})
 	} else {
 		// Functions master

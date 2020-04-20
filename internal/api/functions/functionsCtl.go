@@ -3,8 +3,8 @@ package functions
 import (
 	"net/http"
 
+	error2 "github.com/galo/moloon/internal/api/error"
 	"github.com/galo/moloon/internal/database"
-	error2 "github.com/galo/moloon/internal/rest/error"
 
 	"github.com/galo/moloon/pkg/models"
 	"github.com/go-chi/chi"
@@ -125,13 +125,15 @@ func (rs *Controller) get(w http.ResponseWriter, r *http.Request) {
 func (rs *Controller) create(w http.ResponseWriter, r *http.Request) {
 	data := &newFunctionRequest{}
 	if err := render.Bind(r, data); err != nil {
-		render.Render(w, r, error2.ErrInvalidRequest(err))
+		_ = render.Render(w, r, error2.ErrInvalidRequest(err))
 		return
 	}
 
 	if err := rs.Store.Create(*data.Function); err != nil {
-		render.Render(w, r, error2.ErrInvalidRequest(err))
+		_ = render.Render(w, r, error2.ErrInvalidRequest(err))
 	}
+
+	render.Status(r, http.StatusCreated)
 	render.Respond(w, r, newFunctionResponse(data.Function))
 }
 
@@ -157,6 +159,7 @@ func (rs *Controller) delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	render.Status(r, http.StatusNoContent)
 	render.Respond(w, r, http.NoBody)
 }
 

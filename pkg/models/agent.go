@@ -3,8 +3,8 @@ package models
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/golang/glog"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"gopkg.in/yaml.v2"
@@ -44,7 +44,7 @@ func (a *Agent) YamlMarshal() (data []byte, err error) {
 // YamlUnmarshal ummarshals the YAML into an agent object.
 func (a *Agent) YamlUnmarshal(data []byte) (err error) {
 	if err = yaml.Unmarshal(data, &a); err != nil {
-		log.Println("Failed to convert yaml file into a agent object.")
+		glog.Info("Failed to convert yaml file into a agent object.")
 	}
 	return
 }
@@ -59,14 +59,14 @@ func (a *Agent) CreateFunction(function Function) (err error) {
 	var createFunctionUrl = a.Spec.Uri + "/api/v1/functions"
 	response, err := http.Post(createFunctionUrl, "application/json", bytes.NewBuffer(jsonFunction))
 	if err != nil {
-		log.Fatalf("The HTTP request failed with error %s\n", err)
+		glog.Errorf("Error: The HTTP request failed with error %s\n", err)
 		return err
 	} else if response.StatusCode != 200 {
-		log.Fatalf("The HTTP request failed with error %v\n", response.StatusCode)
+		glog.Errorf("Error: The HTTP request failed with error %v\n", response.StatusCode)
 		return ErrInternalError
 	} else {
 		data, _ := ioutil.ReadAll(response.Body)
-		log.Println(string(data))
+		glog.Infoln(string(data))
 	}
 	return nil
 }

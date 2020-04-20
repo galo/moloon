@@ -3,7 +3,7 @@ package cmd
 import (
 	"log"
 
-	"github.com/galo/moloon/internal/rest"
+	"github.com/galo/moloon/internal/api"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -14,7 +14,7 @@ var masterCmd = &cobra.Command{
 	Short: "start the moloon master",
 	Long:  `Starts a http master server and serves the api. `,
 	Run: func(cmd *cobra.Command, args []string) {
-		server, err := rest.NewServer(true)
+		server, err := api.NewServer(true)
 		if err != nil {
 			log.Fatal(err)
 		}

@@ -1,5 +1,6 @@
-// Package controller implements the APIs
-package controller
+// Package app ties together application resources and handlers.
+
+package functions
 
 import (
 	"database/sql"
@@ -20,16 +21,17 @@ const (
 
 // API provides application resources and handlers.
 type API struct {
-	controllerResource *Controller
+	FunctionRsc *Controller
 }
 
-// NewAPI configures and returns application API - based on a function
-// store and agent discovery service
+// NewAPI configures and returns application API.
 func NewAPI(db *sql.DB) (*API, error) {
-	controllerResource := NewMasterController(database.NewFunctionStore(db))
+	//accountStore := database.NewAccountStore(db)
+
+	functionRsrc := NewFunctionController(database.GetFunctionStore(db))
 
 	api := &API{
-		controllerResource: controllerResource,
+		FunctionRsc: functionRsrc,
 	}
 	return api, nil
 }
@@ -38,7 +40,7 @@ func NewAPI(db *sql.DB) (*API, error) {
 func (a *API) Router() *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Mount("/v1/controller", a.controllerResource.router())
+	r.Mount("/v1/functions", a.FunctionRsc.router())
 
 	return r
 }
