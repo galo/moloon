@@ -27,7 +27,7 @@ type API struct {
 
 // NewAPI configures and returns application API.
 func NewAPI(db *sql.DB) (*API, error) {
-	functionRsrc := NewFaaSResource(database.NewFunctionStore(db),
+	functionRsrc := NewFaaSResource(database.GetFunctionStore(db),
 		rte.NewDockerRuntime())
 
 	api := &API{

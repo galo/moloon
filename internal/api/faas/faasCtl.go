@@ -3,8 +3,8 @@ package faas
 import (
 	"net/http"
 
+	error2 "github.com/galo/moloon/internal/api/error"
 	"github.com/galo/moloon/internal/database"
-	error2 "github.com/galo/moloon/internal/rest/error"
 	"github.com/galo/moloon/internal/rte"
 	"github.com/galo/moloon/pkg/models"
 	"github.com/go-chi/chi"

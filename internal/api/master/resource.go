@@ -1,8 +1,7 @@
-package controller
+package master
 
 import (
-	"github.com/galo/moloon/internal/logging"
-	error2 "github.com/galo/moloon/internal/rest/error"
+	error2 "github.com/galo/moloon/internal/api/error"
 
 	"net/http"
 
@@ -13,16 +12,16 @@ import (
 	"github.com/go-chi/render"
 )
 
-// Controller the controller to manage agents and functions
-type Controller struct {
+// Resource the controller to manage agents and functions
+type Resource struct {
 	store            database.FunctionStore
 	discoveryService disco.DiscoveryService
 }
 
-// NewMasterController creates the controller to manage agents and functions
-func NewMasterController(store database.FunctionStore) *Controller {
-	d := disco.NewDiscoveryService()
-	return &Controller{store, d}
+// NewResource creates the controller to manage agents and functions
+func NewResource(store database.FunctionStore, d disco.DiscoveryService) *Resource {
+
+	return &Resource{store, d}
 }
 
 type agentResponse struct {
@@ -80,7 +79,7 @@ func newFunctionResponse(f *models.Function) *functionResponse {
 	return resp
 }
 
-func (rs *Controller) router() *chi.Mux {
+func (rs *Resource) router() *chi.Mux {
 	//auth, err := jwt.NewTokenAuth()
 	//if err != nil {
 	//	logging.Logger.Panic(err)
@@ -104,11 +103,11 @@ func (rs *Controller) router() *chi.Mux {
 	return r
 }
 
-func (rs *Controller) create(w http.ResponseWriter, r *http.Request) {
+func (rs *Resource) create(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (rs *Controller) listAgents(w http.ResponseWriter, r *http.Request) {
+func (rs *Resource) listAgents(w http.ResponseWriter, r *http.Request) {
 	//List all agents
 	agents, err := rs.discoveryService.GetAll()
 	if err != nil {
@@ -123,20 +122,26 @@ func (rs *Controller) listAgents(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (rs *Controller) createFunction(w http.ResponseWriter, r *http.Request) {
+func (rs *Resource) createFunction(w http.ResponseWriter, r *http.Request) {
 	// A function is created, pushes the function to all agents
 
 	// get the function
 	data := &newFunctionRequest{}
 	if err := render.Bind(r, data); err != nil {
-		render.Render(w, r, error2.ErrInvalidRequest(err))
+		_ = render.Render(w, r, error2.ErrInvalidRequest(err))
 		return
 	}
 
-	// We do not store the function locally on the agent, whic probably we shoudl do
+	// Store the function locally
+	if err := rs.store.Create(*data.Function); err != nil {
+		_ = render.Render(w, r, error2.ErrInvalidRequest(err))
+	}
+
+	render.Status(r, http.StatusCreated)
+	render.Respond(w, r, newFunctionResponse(data.Function))
 
 	// Gets all agents
-	agents, err := rs.discoveryService.GetAll()
+	/*agents, err := rs.discoveryService.GetAll()
 	if err != nil {
 		_ = render.Render(w, r, error2.ErrInternalServerError)
 		return
@@ -149,14 +154,14 @@ func (rs *Controller) createFunction(w http.ResponseWriter, r *http.Request) {
 			logging.Logger.Printf("Error creating agent %v", err)
 			render.Render(w, r, error2.ErrInvalidRequest(err))
 		}
-	}
+	}*/
 
 }
 
-func (rs *Controller) get(w http.ResponseWriter, r *http.Request) {
+func (rs *Resource) get(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (rs *Controller) delete(w http.ResponseWriter, r *http.Request) {
+func (rs *Resource) delete(w http.ResponseWriter, r *http.Request) {
 
 }

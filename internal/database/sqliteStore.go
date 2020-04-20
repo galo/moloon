@@ -7,15 +7,23 @@ import (
 	"github.com/galo/moloon/pkg/models"
 )
 
+var (
+	store *FunctionStoreSQLite
+)
+
 type FunctionStoreSQLite struct {
 	db *sql.DB
 }
 
-func NewFunctionStore(db *sql.DB) *FunctionStoreSQLite {
-	setupDb(db)
-	return &FunctionStoreSQLite{
-		db: db,
+// Returns the singleton Store
+func GetFunctionStore(db *sql.DB) *FunctionStoreSQLite {
+	if store == nil {
+		setupDb(db)
+		store = &FunctionStoreSQLite{
+			db: db,
+		}
 	}
+	return store
 }
 
 // Get returns function by name, uniqueness is enforced by DB

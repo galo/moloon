@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/galo/moloon/internal/rest"
+	"github.com/galo/moloon/internal/api"
 	"github.com/go-chi/docgen"
 	"github.com/spf13/cobra"
 )
@@ -42,7 +42,7 @@ func init() {
 }
 
 func genRoutesDoc() {
-	api, _ := rest.New(false)
+	api, _ := api.New(false)
 	fmt.Print("generating routes markdown file: ")
 	md := docgen.MarkdownRoutesDoc(api, docgen.MarkdownOpts{
 		ProjectPath: "github.azc.ext.hp.com/galo/pym",

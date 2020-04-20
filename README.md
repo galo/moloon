@@ -5,8 +5,7 @@
 ## Building
 
 ```bash
-make
-docker-compose build
+make build
 ```
 
 ## Configuration
@@ -14,7 +13,7 @@ docker-compose build
 Moolon can be configured using a config file or environment variables. By default the $HOME/.moolon.yaml will be used, but you can specify other locations, for instance.
 
 ```bash
-moloon master --config .moloon.yaml
+./moloon master --config .moloon.yaml
 ```
 
 ## Agent and Controller
@@ -24,7 +23,7 @@ Moolon is composed of a master, and a number of agents. Agent discovery can done
 To start an agent, do
 
 ```bash
-moloon agent
+./moloon agent
 ```
 
 To start a master
