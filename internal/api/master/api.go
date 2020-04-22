@@ -38,7 +38,7 @@ func NewAPI(db *sql.DB, d disco.DiscoveryService) (*API, error) {
 func (a *API) Router() *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Mount("/v1/controller", a.controllerResource.router())
+	r.Mount("/", a.controllerResource.router())
 
 	return r
 }

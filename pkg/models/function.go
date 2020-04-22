@@ -3,6 +3,7 @@ package models
 
 import (
 	"encoding/json"
+	"github.com/galo/moloon/pkg/rand"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
@@ -11,6 +12,7 @@ import (
 type Function struct {
 	APIHeader
 	Metadata Metadata
+	Id       string
 	Spec     FunctionSpec `json:"spec,omitempty"`
 }
 
@@ -24,8 +26,9 @@ func NewFunction(name string, image string, lang string) *Function {
 	var a = APIHeader{APIVersion: "v1", Kind: "function"}
 	var m = Metadata{name, make(map[string]string)}
 	var s = FunctionSpec{Image: image, Lang: lang}
+	var id = name + "-" + rand.String(4)
 
-	return &Function{APIHeader: a, Metadata: m, Spec: s}
+	return &Function{APIHeader: a, Metadata: m, Id: id, Spec: s}
 }
 
 // JSONMarshal marshals the api object into JSON format.

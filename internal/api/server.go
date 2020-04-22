@@ -16,13 +16,15 @@ import (
 
 // Server provides an http.Server.
 type Server struct {
-	*http.Server
+	srv *http.Server
+	ctl *controller.Controller
 }
 
 // NewServer creates and configures an APIServer serving all application routes.
 // isMaster determines the API set to  provide, and if enabled initializes the Moloon Controller
 func NewServer(isMaster bool) (*Server, error) {
 	log.Println("configuring server...")
+	var ctl controller.Controller
 
 	if isMaster {
 		// Setup the DB
@@ -32,8 +34,7 @@ func NewServer(isMaster bool) (*Server, error) {
 		}
 
 		//Initialize the Moloon Controller
-		ctl := controller.GetController(database.GetFunctionStore(db), disco.NewDiscoveryService())
-		ctl.Start()
+		ctl = controller.GetController(database.GetFunctionStore(db), disco.NewDiscoveryService())
 	}
 
 	api, err := New(isMaster)
@@ -56,18 +57,23 @@ func NewServer(isMaster bool) (*Server, error) {
 		Handler: api,
 	}
 
-	return &Server{&srv}, nil
+	return &Server{&srv, &ctl}, nil
 }
 
 // Start runs ListenAndServe on the http.Server with graceful shutdown.
 func (srv *Server) Start() {
 	log.Println("starting server...")
 	go func() {
-		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+		if err := srv.srv.ListenAndServe(); err != http.ErrServerClosed {
 			panic(err)
 		}
 	}()
-	log.Printf("Listening on %s\n", srv.Addr)
+	log.Printf("Listening on %s\n", srv.srv.Addr)
+
+	// If a controller is setup , let's start it
+	if srv.ctl != nil {
+		srv.ctl.Start()
+	}
 
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
@@ -75,7 +81,7 @@ func (srv *Server) Start() {
 	log.Println("Shutting down server... Reason:", sig)
 	// teardown logic...
 
-	if err := srv.Shutdown(context.Background()); err != nil {
+	if err := srv.srv.Shutdown(context.Background()); err != nil {
 		panic(err)
 	}
 	log.Println("Server gracefully stopped")
