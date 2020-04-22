@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"github.com/golang/glog"
+	"github.com/galo/moloon/internal/logging"
 	"log"
 
 	"github.com/galo/moloon/pkg/models"
@@ -43,7 +43,7 @@ func (s *FunctionStoreSQLite) Get(fname string) (*models.Function, error) {
 		return buildFunction(id, name, image, lang), nil
 	default:
 		// Some other unknown error reading from the db
-		glog.Error("Error fetching form Db", err)
+		logging.Logger.Errorln("Error fetching form Db", err)
 		return nil, err
 	}
 }
@@ -61,7 +61,7 @@ func buildFunction(id string, name string, image string, lang string) *models.Fu
 func (s *FunctionStoreSQLite) GetAll() ([]*models.Function, error) {
 	rows, err := s.db.Query("SELECT fid, fname, image, lang FROM functions")
 	if err != nil {
-		glog.Error("Error fetching functions from Db", err)
+		logging.Logger.Errorln("Error fetching functions from Db", err)
 		return nil, err
 	}
 	var fns = make([]*models.Function, 0)
@@ -92,7 +92,7 @@ func (s *FunctionStoreSQLite) Delete(f models.Function) error {
 	case sql.ErrNoRows:
 		return nil
 	default:
-		glog.Infoln("Error while deleting a function", err)
+		logging.Logger.Errorln("Error while deleting a function", err)
 		return nil
 	}
 }
@@ -101,13 +101,13 @@ func (s *FunctionStoreSQLite) Delete(f models.Function) error {
 func (s *FunctionStoreSQLite) Create(f models.Function) error {
 	statement, err := s.db.Prepare("INSERT INTO functions (fid, fname, image, lang) VALUES (?, ?, ?, ?)")
 	if err != nil {
-		glog.Infoln("Error inserting function in db", err)
+		logging.Logger.Errorln("Error inserting function in db", err)
 		return err
 	}
 
 	_, err = statement.Exec(f.Id, f.Metadata.Name, f.Spec.Image, f.Spec.Lang)
 	if err != nil {
-		glog.Infoln("Error inserting function in db", err)
+		logging.Logger.Errorln("Error inserting function in db", err)
 		return err
 	}
 
@@ -116,7 +116,7 @@ func (s *FunctionStoreSQLite) Create(f models.Function) error {
 
 func setupDb(db *sql.DB) {
 	statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS " +
-		"functions (id INTEGER PRIMARY KEY AUTOINCREMENT, fid TEXT, fname TEXT key, image TEXT, lang TEXT)")
+		"functions (id INTEGER PRIMARY KEY AUTOINCREMENT, fid TEXT, fname TEXT UNIQUE, image TEXT, lang TEXT)")
 	if err != nil {
 		log.Fatal("Error setting up the db", err)
 	}

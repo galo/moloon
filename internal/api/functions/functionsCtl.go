@@ -134,6 +134,7 @@ func (rs *Controller) create(w http.ResponseWriter, r *http.Request) {
 
 	if err := rs.Store.Create(*data.Function); err != nil {
 		_ = render.Render(w, r, error2.ErrInvalidRequest(err))
+		return
 	}
 
 	render.Status(r, http.StatusCreated)
