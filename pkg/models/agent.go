@@ -3,7 +3,7 @@ package models
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/golang/glog"
+	"github.com/galo/moloon/internal/logging"
 	"io/ioutil"
 	"net/http"
 
@@ -20,7 +20,7 @@ type AgentSpec struct {
 	Uri string `json:"uri,omitempty"`
 }
 
-// NewAgent is a function factory that creates the barebone agents
+// NewAgent is a function factory that creates the bare bones agents
 func NewAgent(name string, uri string) *Agent {
 	var a = APIHeader{APIVersion: "v1", Kind: "agent"}
 	var m = Metadata{name, make(map[string]string)}
@@ -41,10 +41,10 @@ func (a *Agent) YamlMarshal() (data []byte, err error) {
 	return
 }
 
-// YamlUnmarshal ummarshals the YAML into an agent object.
+// YamlUnmarshal unmarshal the YAML into an agent object.
 func (a *Agent) YamlUnmarshal(data []byte) (err error) {
 	if err = yaml.Unmarshal(data, &a); err != nil {
-		glog.Info("Failed to convert yaml file into a agent object.")
+		logging.Logger.Info("Failed to convert yaml file into a agent object.")
 	}
 	return
 }
@@ -59,14 +59,14 @@ func (a *Agent) CreateFunction(function Function) (err error) {
 	var createFunctionUrl = a.Spec.Uri + "/api/v1/functions"
 	response, err := http.Post(createFunctionUrl, "application/json", bytes.NewBuffer(jsonFunction))
 	if err != nil {
-		glog.Errorf("Error: The HTTP request failed with error %s\n", err)
+		logging.Logger.Errorf("Error: The HTTP request failed with error %s\n", err)
 		return err
 	} else if response.StatusCode != 200 {
-		glog.Errorf("Error: The HTTP request failed with error %v\n", response.StatusCode)
+		logging.Logger.Errorf("Error: The HTTP request failed with error %v\n", response.StatusCode)
 		return ErrInternalError
 	} else {
 		data, _ := ioutil.ReadAll(response.Body)
-		glog.Infoln(string(data))
+		logging.Logger.Infoln(string(data))
 	}
 	return nil
 }

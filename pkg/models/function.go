@@ -21,7 +21,7 @@ type FunctionSpec struct {
 	Lang  string
 }
 
-// NewFunction is a function factory that creates the barebone function
+// NewFunction is a function factory that creates the bare bones function
 func NewFunction(name string, image string, lang string) *Function {
 	var a = APIHeader{APIVersion: "v1", Kind: "function"}
 	var m = Metadata{name, make(map[string]string)}

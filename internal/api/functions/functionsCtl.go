@@ -1,6 +1,7 @@
 package functions
 
 import (
+	"github.com/galo/moloon/pkg/rand"
 	"net/http"
 
 	error2 "github.com/galo/moloon/internal/api/error"
@@ -76,6 +77,8 @@ func (d *newFunctionRequest) Bind(r *http.Request) error {
 	if d.Spec.Image == "" {
 		return models.ErrFunctionValidation
 	}
+
+	d.Id = d.Metadata.Name + "-" + rand.String(6)
 	return nil
 }
 
