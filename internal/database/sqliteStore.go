@@ -116,7 +116,7 @@ func (s *FunctionStoreSQLite) Create(f models.Function) error {
 
 func setupDb(db *sql.DB) {
 	statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS " +
-		"functions (id INTEGER PRIMARY KEY AUTOINCREMENT, fid TEXT, fname TEXT UNIQUE, image TEXT, lang TEXT)")
+		"functions (id INTEGER PRIMARY KEY AUTOINCREMENT, fid TEXT UNIQUE, fname TEXT UNIQUE, image TEXT, lang TEXT)")
 	if err != nil {
 		log.Fatal("Error setting up the db", err)
 	}
