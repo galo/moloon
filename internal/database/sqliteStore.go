@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"github.com/golang/glog"
 	"log"
 
 	"github.com/galo/moloon/pkg/models"
@@ -28,29 +29,39 @@ func GetFunctionStore(db *sql.DB) *FunctionStoreSQLite {
 
 // Get returns function by name, uniqueness is enforced by DB
 func (s *FunctionStoreSQLite) Get(fname string) (*models.Function, error) {
-	row := s.db.QueryRow("SELECT fname, image, lang FROM functions  WHERE fname= $1", fname)
+	row := s.db.QueryRow("SELECT fid, fname, image, lang FROM functions  WHERE fname= $1", fname)
 
 	var name string
 	var image string
 	var lang string
+	var id string
 
-	switch err := row.Scan(&name, &image, &lang); err {
+	switch err := row.Scan(&id, &name, &image, &lang); err {
 	case sql.ErrNoRows:
 		return nil, models.ErrFunctionNotfound
 	case nil:
-		return models.NewFunction(name, image, lang), nil
+		return buildFunction(id, name, image, lang), nil
 	default:
 		// Some other unknown error reading from the db
-		log.Fatal("Error fetching form Db", err)
+		glog.Error("Error fetching form Db", err)
 		return nil, err
 	}
 }
 
+// NewFunction is a function factory that creates the barebones function
+func buildFunction(id string, name string, image string, lang string) *models.Function {
+	var a = models.APIHeader{APIVersion: "v1", Kind: "function"}
+	var m = models.Metadata{name, make(map[string]string)}
+	var s = models.FunctionSpec{Image: image, Lang: lang}
+
+	return &models.Function{APIHeader: a, Metadata: m, Id: id, Spec: s}
+}
+
 // GetAll  returns all function
 func (s *FunctionStoreSQLite) GetAll() ([]*models.Function, error) {
-	rows, err := s.db.Query("SELECT fname, image, lang FROM functions")
+	rows, err := s.db.Query("SELECT fid, fname, image, lang FROM functions")
 	if err != nil {
-		log.Fatal("Error fetching functions from Db", err)
+		glog.Error("Error fetching functions from Db", err)
 		return nil, err
 	}
 	var fns = make([]*models.Function, 0)
@@ -59,12 +70,13 @@ func (s *FunctionStoreSQLite) GetAll() ([]*models.Function, error) {
 		var name string
 		var image string
 		var lang string
+		var id string
 
-		switch err := rows.Scan(&name, &image, &lang); err {
+		switch err := rows.Scan(&id, &name, &image, &lang); err {
 		case sql.ErrNoRows:
 			return nil, models.ErrFunctionNotfound
 		default:
-			f := models.NewFunction(name, image, lang)
+			f := buildFunction(id, name, image, lang)
 			fns = append(fns, f)
 		}
 	}
@@ -80,22 +92,22 @@ func (s *FunctionStoreSQLite) Delete(f models.Function) error {
 	case sql.ErrNoRows:
 		return nil
 	default:
-		log.Println("Error while deleting a function", err)
+		glog.Infoln("Error while deleting a function", err)
 		return nil
 	}
 }
 
 // Creates a function in the Db
 func (s *FunctionStoreSQLite) Create(f models.Function) error {
-	statement, err := s.db.Prepare("INSERT INTO functions (fname, image, lang) VALUES (?, ?, ?)")
+	statement, err := s.db.Prepare("INSERT INTO functions (fid, fname, image, lang) VALUES (?, ?, ?, ?)")
 	if err != nil {
-		log.Println("Error inserting function in db", err)
+		glog.Infoln("Error inserting function in db", err)
 		return err
 	}
 
-	_, err = statement.Exec(f.Metadata.Name, f.Spec.Image, f.Spec.Lang)
+	_, err = statement.Exec(f.Id, f.Metadata.Name, f.Spec.Image, f.Spec.Lang)
 	if err != nil {
-		log.Println("Error inserting function in db", err)
+		glog.Infoln("Error inserting function in db", err)
 		return err
 	}
 
@@ -104,7 +116,7 @@ func (s *FunctionStoreSQLite) Create(f models.Function) error {
 
 func setupDb(db *sql.DB) {
 	statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS " +
-		"functions (id INTEGER PRIMARY KEY AUTOINCREMENT, fname TEXT , image TEXT, lang TEXT)")
+		"functions (id INTEGER PRIMARY KEY AUTOINCREMENT, fid TEXT, fname TEXT , image TEXT, lang TEXT)")
 	if err != nil {
 		log.Fatal("Error setting up the db", err)
 	}

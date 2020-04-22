@@ -3,7 +3,6 @@ package api
 
 import (
 	"github.com/galo/moloon/internal/disco"
-	"log"
 	"net/http"
 	"time"
 
@@ -28,7 +27,7 @@ func New(isMaster bool) (*chi.Mux, error) {
 	// Setup the DB
 	db, err := database.DBConn()
 	if err != nil {
-		log.Fatal("Db cannot be configured", err)
+		logger.Fatal("Db cannot be configured", err)
 	}
 
 	r := chi.NewRouter()
@@ -43,6 +42,12 @@ func New(isMaster bool) (*chi.Mux, error) {
 
 	// use CORS middleware if client is not served by this api, e.g. from other domain or CDN
 	// r.Use(corsConfig().Handler)
+	// Functions master
+	functionAPI, err := functions.NewAPI(db)
+	if err != nil {
+		logger.WithField("module", "agent").Error(err)
+		return nil, err
+	}
 
 	// When running in master mode, activate the master API
 	if isMaster {
@@ -59,16 +64,10 @@ func New(isMaster bool) (*chi.Mux, error) {
 		logger.WithField("module", "master").Infoln("Starting master")
 
 		r.Group(func(r chi.Router) {
-			r.Mount("/api", masterAPI.Router())
+			r.Mount("/api/v1/agents", masterAPI.Router())
+			r.Mount("/api/v1/functions", functionAPI.Router())
 		})
 	} else {
-		// Functions master
-		functionAPI, err := functions.NewAPI(db)
-		if err != nil {
-			logger.WithField("module", "agent").Error(err)
-			return nil, err
-		}
-
 		// FaaS runtime master
 		faasAPI, err := faas.NewAPI(db)
 		if err != nil {
@@ -88,7 +87,7 @@ func New(isMaster bool) (*chi.Mux, error) {
 	}
 
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("pong"))
+		_, _ = w.Write([]byte("pong"))
 	})
 
 	return r, nil

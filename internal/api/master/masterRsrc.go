@@ -92,18 +92,14 @@ func (rs *Resource) router() *chi.Mux {
 	//r.Use(rs.VersionCtx)
 	//r.Use(rs.NamespaceCtx)
 
-	r.Get("/agents", rs.listAgents)
-	r.Post("/functions", rs.createFunction)
-
-	//r.Route("/{functionName}", func(r chi.Router) {
-	//	r.Get("/", rs.get)
-	//	r.Delete("/", rs.delete)
-	//})
+	r.Get("/", rs.listAgents)
+	// r.Post("/agents", rs.createAgent)
+	//r.Delete("/", rs.deleteAgent)
 
 	return r
 }
 
-func (rs *Resource) create(w http.ResponseWriter, r *http.Request) {
+func (rs *Resource) createAgent(w http.ResponseWriter, r *http.Request) {
 
 }
 
@@ -119,42 +115,6 @@ func (rs *Resource) listAgents(w http.ResponseWriter, r *http.Request) {
 		_ = render.Render(w, r, error2.ErrRender(err))
 		return
 	}
-
-}
-
-func (rs *Resource) createFunction(w http.ResponseWriter, r *http.Request) {
-	// A function is created, pushes the function to all agents
-
-	// get the function
-	data := &newFunctionRequest{}
-	if err := render.Bind(r, data); err != nil {
-		_ = render.Render(w, r, error2.ErrInvalidRequest(err))
-		return
-	}
-
-	// Store the function locally
-	if err := rs.store.Create(*data.Function); err != nil {
-		_ = render.Render(w, r, error2.ErrInvalidRequest(err))
-	}
-
-	render.Status(r, http.StatusCreated)
-	render.Respond(w, r, newFunctionResponse(data.Function))
-
-	// Gets all agents
-	/*agents, err := rs.discoveryService.GetAll()
-	if err != nil {
-		_ = render.Render(w, r, error2.ErrInternalServerError)
-		return
-	}
-
-	// create the function on each agent
-	for _, a := range agents {
-		err = a.CreateFunction(*data.Function)
-		if err != nil {
-			logging.Logger.Printf("Error creating agent %v", err)
-			render.Render(w, r, error2.ErrInvalidRequest(err))
-		}
-	}*/
 
 }
 

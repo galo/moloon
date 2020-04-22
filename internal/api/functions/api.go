@@ -40,7 +40,7 @@ func NewAPI(db *sql.DB) (*API, error) {
 func (a *API) Router() *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Mount("/v1/functions", a.FunctionRsc.router())
+	r.Mount("/", a.FunctionRsc.router())
 
 	return r
 }
