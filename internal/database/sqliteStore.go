@@ -29,7 +29,7 @@ func GetFunctionStore(db *sql.DB) *FunctionStoreSQLite {
 
 // Get returns function by name, uniqueness is enforced by DB
 func (s *FunctionStoreSQLite) Get(fname string) (*models.Function, error) {
-	row := s.db.QueryRow("SELECT fid, fname, image, lang FROM functions  WHERE fname= $1", fname)
+	row := s.db.QueryRow("SELECT fid, fname, image, lang FROM functions  WHERE fid= $1", fname)
 
 	var name string
 	var image string
@@ -86,7 +86,7 @@ func (s *FunctionStoreSQLite) GetAll() ([]*models.Function, error) {
 
 // Delete removes a function form the DB
 func (s *FunctionStoreSQLite) Delete(f models.Function) error {
-	row := s.db.QueryRow("DELETE FROM functions WHERE fname= $1", f.Metadata.Name)
+	row := s.db.QueryRow("DELETE FROM functions WHERE fid= $1", f.Id)
 
 	switch err := row.Scan(); err {
 	case sql.ErrNoRows:

@@ -11,8 +11,8 @@ import (
 //Function holds the information in a Function
 type Function struct {
 	APIHeader
-	Metadata Metadata
-	Id       string
+	Metadata Metadata     `json:"metadata"`
+	Id       string       `json:"name"`
 	Spec     FunctionSpec `json:"spec,omitempty"`
 }
 
