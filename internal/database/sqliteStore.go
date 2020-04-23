@@ -29,18 +29,19 @@ func GetFunctionStore(db *sql.DB) *FunctionStoreSQLite {
 
 // Get returns function by name, uniqueness is enforced by DB
 func (s *FunctionStoreSQLite) Get(fname string) (*models.Function, error) {
-	row := s.db.QueryRow("SELECT fid, fname, image, lang FROM functions  WHERE fname= $1", fname)
+	row := s.db.QueryRow("SELECT fid, fname, namespace, image, lang FROM functions  WHERE fid= $1", fname)
 
 	var name string
 	var image string
 	var lang string
 	var id string
+	var namespace string
 
-	switch err := row.Scan(&id, &name, &image, &lang); err {
+	switch err := row.Scan(&id, &name, &namespace, &image, &lang); err {
 	case sql.ErrNoRows:
 		return nil, models.ErrFunctionNotfound
 	case nil:
-		return buildFunction(id, name, image, lang), nil
+		return buildFunction(id, name, namespace, image, lang), nil
 	default:
 		// Some other unknown error reading from the db
 		logging.Logger.Errorln("Error fetching form Db", err)
@@ -48,18 +49,18 @@ func (s *FunctionStoreSQLite) Get(fname string) (*models.Function, error) {
 	}
 }
 
-// NewFunction is a function factory that creates the barebones function
-func buildFunction(id string, name string, image string, lang string) *models.Function {
+// NewFunction is a function factory that creates the bare bones function
+func buildFunction(id string, name string, namespace string, image string, lang string) *models.Function {
 	var a = models.APIHeader{APIVersion: "v1", Kind: "function"}
 	var m = models.Metadata{name, make(map[string]string)}
 	var s = models.FunctionSpec{Image: image, Lang: lang}
 
-	return &models.Function{APIHeader: a, Metadata: m, Id: id, Spec: s}
+	return &models.Function{APIHeader: a, Metadata: m, Id: id, Namespace: namespace, Spec: s}
 }
 
 // GetAll  returns all function
 func (s *FunctionStoreSQLite) GetAll() ([]*models.Function, error) {
-	rows, err := s.db.Query("SELECT fid, fname, image, lang FROM functions")
+	rows, err := s.db.Query("SELECT fid, fname, namespace, image, lang FROM functions")
 	if err != nil {
 		logging.Logger.Errorln("Error fetching functions from Db", err)
 		return nil, err
@@ -71,12 +72,13 @@ func (s *FunctionStoreSQLite) GetAll() ([]*models.Function, error) {
 		var image string
 		var lang string
 		var id string
+		var namespace string
 
-		switch err := rows.Scan(&id, &name, &image, &lang); err {
+		switch err := rows.Scan(&id, &name, &namespace, &image, &lang); err {
 		case sql.ErrNoRows:
 			return nil, models.ErrFunctionNotfound
 		default:
-			f := buildFunction(id, name, image, lang)
+			f := buildFunction(id, name, namespace, image, lang)
 			fns = append(fns, f)
 		}
 	}
@@ -86,7 +88,7 @@ func (s *FunctionStoreSQLite) GetAll() ([]*models.Function, error) {
 
 // Delete removes a function form the DB
 func (s *FunctionStoreSQLite) Delete(f models.Function) error {
-	row := s.db.QueryRow("DELETE FROM functions WHERE fname= $1", f.Metadata.Name)
+	row := s.db.QueryRow("DELETE FROM functions WHERE fid= $1", f.Id)
 
 	switch err := row.Scan(); err {
 	case sql.ErrNoRows:
@@ -99,13 +101,13 @@ func (s *FunctionStoreSQLite) Delete(f models.Function) error {
 
 // Creates a function in the Db
 func (s *FunctionStoreSQLite) Create(f models.Function) error {
-	statement, err := s.db.Prepare("INSERT INTO functions (fid, fname, image, lang) VALUES (?, ?, ?, ?)")
+	statement, err := s.db.Prepare("INSERT INTO functions (fid, fname, namespace, image, lang) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		logging.Logger.Errorln("Error inserting function in db", err)
 		return err
 	}
 
-	_, err = statement.Exec(f.Id, f.Metadata.Name, f.Spec.Image, f.Spec.Lang)
+	_, err = statement.Exec(f.Id, f.Metadata.Name, f.Namespace, f.Spec.Image, f.Spec.Lang)
 	if err != nil {
 		logging.Logger.Errorln("Error inserting function in db", err)
 		return err
@@ -116,7 +118,7 @@ func (s *FunctionStoreSQLite) Create(f models.Function) error {
 
 func setupDb(db *sql.DB) {
 	statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS " +
-		"functions (id INTEGER PRIMARY KEY AUTOINCREMENT, fid TEXT UNIQUE, fname TEXT UNIQUE, image TEXT, lang TEXT)")
+		"functions (id INTEGER PRIMARY KEY AUTOINCREMENT, fid TEXT UNIQUE, fname TEXT UNIQUE, namespace TEXT, image TEXT, lang TEXT)")
 	if err != nil {
 		log.Fatal("Error setting up the db", err)
 	}

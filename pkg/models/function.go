@@ -11,9 +11,10 @@ import (
 //Function holds the information in a Function
 type Function struct {
 	APIHeader
-	Metadata Metadata
-	Id       string
-	Spec     FunctionSpec `json:"spec,omitempty"`
+	Metadata  Metadata     `json:"metadata"`
+	Id        string       `json:"name"`
+	Namespace string       `json:"namespace"`
+	Spec      FunctionSpec `json:"spec,omitempty"`
 }
 
 type FunctionSpec struct {
@@ -22,13 +23,21 @@ type FunctionSpec struct {
 }
 
 // NewFunction is a function factory that creates the bare bones function
-func NewFunction(name string, image string, lang string) *Function {
+func NewFunction(name string, namespace string, image string, lang string) *Function {
 	var a = APIHeader{APIVersion: "v1", Kind: "function"}
 	var m = Metadata{name, make(map[string]string)}
 	var s = FunctionSpec{Image: image, Lang: lang}
-	var id = name + "-" + rand.String(4)
+	// default is teh default ns
+	if len(namespace) == 0 {
+		namespace = "default"
+	}
+	fid := FuncName(name, namespace)
+	return &Function{APIHeader: a, Metadata: m, Id: fid, Namespace: namespace, Spec: s}
+}
 
-	return &Function{APIHeader: a, Metadata: m, Id: id, Spec: s}
+func FuncName(name string, namespace string) string {
+	var fid = name + "-" + namespace + "-" + rand.String(4)
+	return fid
 }
 
 // JSONMarshal marshals the api object into JSON format.

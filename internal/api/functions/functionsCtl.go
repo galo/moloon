@@ -1,7 +1,6 @@
 package functions
 
 import (
-	"github.com/galo/moloon/pkg/rand"
 	"net/http"
 
 	error2 "github.com/galo/moloon/internal/api/error"
@@ -67,18 +66,25 @@ type newFunctionRequest struct {
 	*models.Function
 }
 
+// Binder interface for managing request payloads.
 func (d *newFunctionRequest) Bind(r *http.Request) error {
-	//d.Kind = "function"
-	//d.ApiVersion = "v1"
+	// Payload validations
+	if d.Kind != "function" {
+		return models.ErrFunctionValidation
+	}
+	if d.APIVersion != "v1" {
+		return models.ErrFunctionValidation
+	}
 	if d.Metadata.Name == "" {
 		return models.ErrFunctionValidation
 	}
-
 	if d.Spec.Image == "" {
 		return models.ErrFunctionValidation
 	}
-
-	d.Id = d.Metadata.Name + "-" + rand.String(6)
+	if d.Namespace == "" {
+		d.Namespace = "default"
+	}
+	d.Id = models.FuncName(d.Metadata.Name, d.Namespace)
 	return nil
 }
 
