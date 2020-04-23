@@ -2,10 +2,11 @@
 	"kind": "function",
 	"apiVersion": "v1",
 	"metadata": {
-		"name": "fibonacci"
+		"name": "helloworld"
 	},
+	"namespace": "galo",
 	"spec": {
-		"image": "jdrk.io / galoficbbo: 1.1",
+		"image": "hello-world",
 		"lang": "docker"
 	}
 }

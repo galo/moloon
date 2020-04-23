@@ -1,8 +1,7 @@
 package disco
 
 import (
-	"log"
-
+	"github.com/galo/moloon/internal/logging"
 	"github.com/galo/moloon/pkg/models"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -22,7 +21,6 @@ func NewKubernetesDiscoveryService(url string) *KubernetesDiscovery {
 
 // GetAll Get all agents running on a cluster
 func (k *KubernetesDiscovery) GetAll() ([]*models.Agent, error) {
-
 	// creates the in-cluster config
 	config, err := rest.InClusterConfig()
 	if err != nil {
@@ -38,9 +36,10 @@ func (k *KubernetesDiscovery) GetAll() ([]*models.Agent, error) {
 
 	pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
 	if err != nil {
-		panic(err.Error())
+		logging.Logger.Errorf("There are %d pods in the cluster\n", len(pods.Items))
+		return nil, err
 	}
-	log.Printf("There are %d pods in the cluster\n", len(pods.Items))
+	logging.Logger.Infof("There are %d pods in the cluster\n", len(pods.Items))
 
 	// TODO: create the agents slice
 

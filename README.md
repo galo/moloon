@@ -10,8 +10,7 @@ make build
 
 ## Configuration
 
-Moolon can be configured using a config file or environment variables. By default the
- $HOME/.moolon.yaml will be used, but you can specify other locations, for instance.
+Moolon can be configured using a config file or environment variables. By default the $HOME/.moolon.yaml will be used, but you can specify other locations, for instance.
 
 ```bash
 ./moloon master --config .moloon.yaml
@@ -19,9 +18,7 @@ Moolon can be configured using a config file or environment variables. By defaul
 
 ## Agent and Controller
 
-Moolon is composed of a master, and a number of agents. Agent discovery can done 
-using Kubernetes or a static configuration file. For static configuration 
-use DISCOVERY_CONFIG=static and DISCOVERY_AGENTS=https://agent1:port,https:agent2:port 
+Moolon is composed of a master, and a number of agents. Agent discovery can performed using Kubernetes or a static configuration file. For static configuration  use _DISCOVERY_CONFIG=static_ and _DISCOVERY_AGENTS=https://agent1:port,https:agent2:port_ 
 
 To start an agent, do
 
