@@ -18,7 +18,7 @@ spec:
         effect: NoSchedule
       containers:
       - name: moloon-agent
-        image:  r.jdkr.io/galo/moloon:1.0.0
+        image:   gcr.io/print-cloud-software/moloon:1.0.0
         args: ["server"] 
         ports:
         - containerPort: 3000

@@ -7,9 +7,9 @@ metadata:
   name: moloon-controler
 spec:
   ports:
-  - port: 3000
-    targetPort: 3000
-    name: http
+    - port: 3000
+      targetPort: 3000
+      name: http
   selector:
     app: moloon-controler
 ---
@@ -27,14 +27,14 @@ spec:
     metadata:
       labels:
         app: moloon-controler
-        version: 1.0.0        
+        version: 1.0.0
     spec:
       containers:
-      - name: meme
-        image:  gcr.io/print-cloud-software/moloon:1.0.0
-        args: ["controller"] 
-        ports:
-        - containerPort: 3000
-        env:
-        - name: DISCOVERY_CONFIG
-          value: kubernetes
+        - name: meme
+          image:  gcr.io/print-cloud-software/moloon:1.0.0
+          args: ["controller"]
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DISCOVERY_CONFIG
+              value: kubernetes
