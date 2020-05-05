@@ -77,7 +77,7 @@ func (ctl *Controller) syncAgents() {
 		for _, a := range agents {
 			err = a.CreateFunction(*f)
 			if err != nil {
-				logging.Logger.Errorf("Error creating function \n", err)
+				logging.Logger.Errorln("Error creating function", err)
 			}
 		}
 	}
