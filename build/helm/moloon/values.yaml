@@ -64,3 +64,6 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+env:
+  - DISCOVERY_CONFIG: "kubernetes"
