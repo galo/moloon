@@ -30,9 +30,10 @@ spec:
         version: 1.0.0
     spec:
       containers:
-        - name: meme
+        - name: master
           image:  gcr.io/print-cloud-software/moloon:1.0.0
-          args: ["controller"]
+          imagePullPolicy: Always
+          args: ["master"]
           ports:
             - containerPort: 3000
           env:

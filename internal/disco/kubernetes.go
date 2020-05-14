@@ -36,10 +36,10 @@ func (k *KubernetesDiscovery) GetAll() ([]*models.Agent, error) {
 
 	pods, err := clientset.CoreV1().Pods("").List(metav1.ListOptions{})
 	if err != nil {
-		logging.Logger.Errorf("There are %d pods in the cluster\n", len(pods.Items))
+		logging.Logger.Errorf("There are %d pods in the cluster \n", len(pods.Items))
 		return nil, err
 	}
-	logging.Logger.Infof("There are %d pods in the cluster\n", len(pods.Items))
+	logging.Logger.Infof("There are %d pods in the cluster \n", len(pods.Items))
 
 	// TODO: create the agents slice
 
