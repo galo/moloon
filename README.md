@@ -79,7 +79,7 @@ Finally you can execute the function in the agent.
 
 ```bash
 curl -X PUT \
-  http://localhost:3001/faas/v1/faas/helloworld 
+  http://localhost:3001/v1/helloworld 
 ```
 
 ### Environment Variables

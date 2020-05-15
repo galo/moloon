@@ -19,13 +19,13 @@ minikube addons enable ingress
 Deploy the controller
 
 ```shell
- kubectl apply -f ./build/minikube/controller.yaml
+ kubectl apply -f ./build/k8s/controller.yaml
 ```
 
 Deploy the agents
 
 ```shell
-kubectl apply -f ./build/k3s/agents.yaml
+kubectl apply -f ./build/k8s/agents.yaml
 ```
 
 ## Access the controler

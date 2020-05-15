@@ -2,14 +2,15 @@ package api
 
 import (
 	"context"
-	"github.com/galo/moloon/internal/controller"
-	"github.com/galo/moloon/internal/database"
-	"github.com/galo/moloon/internal/disco"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"strings"
+
+	"github.com/galo/moloon/internal/controller"
+	"github.com/galo/moloon/internal/database"
+	"github.com/galo/moloon/internal/disco"
 
 	"github.com/spf13/viper"
 )
@@ -25,17 +26,6 @@ type Server struct {
 func NewServer(isMaster bool) (*Server, error) {
 	log.Println("configuring server...")
 	var ctl controller.Controller
-
-	if isMaster {
-		// Setup the DB
-		db, err := database.DBConn()
-		if err != nil {
-			log.Fatal("Db cannot be configured", err)
-		}
-
-		//Initialize the Moloon Controller
-		ctl = controller.GetController(database.GetFunctionStore(db), disco.NewDiscoveryService())
-	}
 
 	api, err := New(isMaster)
 	if err != nil {
@@ -57,7 +47,20 @@ func NewServer(isMaster bool) (*Server, error) {
 		Handler: api,
 	}
 
-	return &Server{&srv, &ctl}, nil
+	// If this is the master initialize the controller
+	if isMaster {
+		// Setup the DB
+		db, err := database.DBConn()
+		if err != nil {
+			log.Fatal("Db cannot be configured", err)
+		}
+
+		//Initialize the Moloon Controller
+		ctl = controller.GetController(database.GetFunctionStore(db), disco.NewDiscoveryService())
+		return &Server{&srv, &ctl}, nil
+	}
+
+	return &Server{&srv, nil}, nil
 }
 
 // Start runs ListenAndServe on the http.Server with graceful shutdown.
