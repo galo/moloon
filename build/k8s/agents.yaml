@@ -19,6 +19,7 @@ spec:
       containers:
         - name: moloon-agent
           image:   gcr.io/print-cloud-software/moloon:1.0.0
+          imagePullPolicy: Always
           args: ["agent"]
           ports:
             - containerPort: 3000

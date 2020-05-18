@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1beta1
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: moloon
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+    rules:
+    - host: "localhost"
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: moloon-controler
+            servicePort: 3000

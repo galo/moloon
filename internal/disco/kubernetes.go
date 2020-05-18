@@ -37,13 +37,13 @@ func (k *KubernetesDiscovery) GetAll() ([]*models.Agent, error) {
 	var agents []*models.Agent
 
 	// Look for agents in the agents Namespace
-	pods, err := clientSet.CoreV1().Pods("agents").List(metav1.ListOptions{})
+	pods, err := clientSet.CoreV1().Pods(k.ns).List(metav1.ListOptions{})
 	if err != nil {
-		logging.Logger.Errorf("There are %d pods in the cluster", len(pods.Items))
+		logging.Logger.Errorf("Error looking for agents in namespace %s", k.ns)
 		return nil, err
 	}
 
-	logging.Logger.Infof("There are %d pods in the cluster", len(pods.Items))
+	logging.Logger.Infof("There are %d agents pods in namespace %s", len(pods.Items), k.ns)
 
 	//
 
