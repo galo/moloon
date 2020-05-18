@@ -14,7 +14,7 @@ Install the ingress add-on
 minikube addons enable ingress
 ```
 
-## Deploy Moolon comtroller and daemonset
+## Deploy Moloon comptroller and daemonset
 
 Deploy the controller
 
