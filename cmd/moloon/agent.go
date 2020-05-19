@@ -28,7 +28,7 @@ func init() {
 	// Here you will define your flags and configuration settings.
 
 	// In development you can use "localhost:3000" to avoid issues with local firewealls
-	viper.SetDefault("port", "localhost:3000")
+	viper.SetDefault("port", ":3000")
 	viper.SetDefault("log_level", "debug")
 
 	// Dev mode
