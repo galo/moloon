@@ -78,11 +78,8 @@ func New(isMaster bool) (*chi.Mux, error) {
 		logger.WithField("module", "agent").Infoln("Starting agent")
 
 		r.Group(func(r chi.Router) {
-			r.Mount("/api", functionAPI.Router())
-		})
-
-		r.Group(func(r chi.Router) {
-			r.Mount("/faas", faasAPI.Router())
+			r.Mount("/api/v1/functions", functionAPI.Router())
+			r.Mount("/v1/faas", faasAPI.Router())
 		})
 	}
 

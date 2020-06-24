@@ -22,9 +22,10 @@ func NewDiscoveryService() DiscoveryService {
 	case "kubernetes":
 		log.Println("Setting up Kubernetes discovery")
 		url := viper.GetString("url")
+		ns := viper.GetString("discovery_namespace")
 
 		// Kubernetes in cluster
-		d = NewKubernetesDiscoveryService(url)
+		d = NewKubernetesDiscoveryService(url, ns)
 
 	// File configured discovery
 	case "static":

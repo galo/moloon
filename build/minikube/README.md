@@ -14,18 +14,18 @@ Install the ingress add-on
 minikube addons enable ingress
 ```
 
-## Deploy Moolon comtroller and daemonset
+## Deploy Moloon comptroller and daemonset
 
 Deploy the controller
 
 ```shell
- kubectl apply -f ./build/minikube/controller.yaml
+ kubectl apply -f ./build/k8s/controller.yaml
 ```
 
 Deploy the agents
 
 ```shell
-kubectl apply -f ./build/k3s/agents.yaml
+kubectl apply -f ./build/k8s/agents.yaml
 ```
 
 ## Access the controler

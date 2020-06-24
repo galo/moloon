@@ -26,7 +26,7 @@ func NewConfigDiscovery(agentsConfig string) *ConfigDiscovery {
 	return &ConfigDiscovery{al}
 }
 
-// GetAll returns all mollon agents
+// GetAll returns all agents
 func (c *ConfigDiscovery) GetAll() ([]*models.Agent, error) {
 	return c.agentsList, nil
 }
